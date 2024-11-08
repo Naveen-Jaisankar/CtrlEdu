@@ -1,0 +1,1 @@
+This folder houses the UI components related to the specific feature hrms. Components here might be specialized for managing staff records, payroll, or employee profiles, depending on what the feature requires. components, such as StaffList, PayrollDetails, or EmployeeProfile.

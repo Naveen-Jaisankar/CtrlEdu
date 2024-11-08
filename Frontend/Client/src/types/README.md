@@ -1,0 +1,1 @@
+Holds TypeScript types and interfaces that define the data structures used in the application. Keeping types in a dedicated folder makes it easy to import them across different parts of the project and ensures type safety.

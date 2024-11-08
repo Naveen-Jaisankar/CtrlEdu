@@ -1,0 +1,1 @@
+Contains code that handles API calls and business logic, keeping the application’s components clean and focused on UI. Examples of files here could include authService.ts for authentication, courseService.ts for course-related APIs, and so on.

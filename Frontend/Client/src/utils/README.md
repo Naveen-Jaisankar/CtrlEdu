@@ -1,0 +1,1 @@
+Contains utility functions and helper files that perform common tasks, such as date formatting, data validation, or constants. These utilities are shared across the application and help to keep the code DRY (Don't Repeat Yourself).

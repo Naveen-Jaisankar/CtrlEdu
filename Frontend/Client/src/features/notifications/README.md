@@ -1,0 +1,1 @@
+Manages components and logic for the notification system, including real-time alerts and announcements for users. It could include notification lists, individual notification items, and related API services.
