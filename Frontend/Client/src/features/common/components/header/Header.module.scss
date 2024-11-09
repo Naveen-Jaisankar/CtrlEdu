@@ -1,0 +1,53 @@
+// Header.module.scss
+@use "../../../../assets/styles/color" as color;
+@use "../../../../assets/styles/fonts" as font;
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: var(--background-color, color.$backgroundColor);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: var(--font-x-large, font.$fontXLarge);
+  font-family: var(--primary-font-family, font.$defaultFontFamily);
+  font-weight: bold;
+  color: var(--primary-color, color.$primaryColor);
+  cursor: pointer;
+}
+
+.navLinks {
+  display: flex;
+  gap: 25px;
+
+  a {
+    font-size: var(--font-medium, font.$fontMedium);
+    color: var(--primary-font-color, color.$primaryColor);
+    text-decoration: none;
+    font-family: var(--primary-font-family, font.$defaultFontFamily);
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--secondary-color, color.$secondaryColor);
+    }
+  }
+}
+
+.callToAction {
+  padding: 10px 20px;
+  background-color: var(--primary-color, color.$primaryColor);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: var(--font-medium, font.$fontMedium);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--primary-dark-color, color.$primaryDarkColor);
+  }
+}

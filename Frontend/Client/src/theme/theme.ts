@@ -1,14 +1,17 @@
-import css from "styled-jsx/css";
-import themeProperties from "./themeProperties";
+// getGlobalStyles.ts
 
-const { colors, fontSizes, defaultFontFamily, lightTheme, darkTheme } =
-  themeProperties;
+import {
+  lightTheme,
+  darkTheme,
+  fontSizes,
+  colors,
+  defaultFontFamily,
+} from "./themeProperties";
 
-// Function to get global styles based on theme
-const getGlobalStyles = (isDarkMode: boolean) => {
+export const getGlobalStyles = (isDarkMode: boolean) => {
   const theme = isDarkMode ? darkTheme : lightTheme;
 
-  return css.global`
+  return `
     :root {
       --primary-font-family: ${defaultFontFamily};
 
@@ -39,6 +42,3 @@ const getGlobalStyles = (isDarkMode: boolean) => {
     }
   `;
 };
-
-export const lightThemeStyles = getGlobalStyles(false);
-export const darkThemeStyles = getGlobalStyles(true);

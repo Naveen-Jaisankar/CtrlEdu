@@ -1,7 +1,20 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// vite.config.ts
+import { defineConfig } from "vite";
+import reactRefresh from "@vitejs/plugin-react-refresh";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [reactRefresh()],
+  css: {
+    preprocessorOptions: {
+      scss: {},
+    },
+  },
+  server: {
+    watch: {
+      usePolling: true,
+    },
+    fs: {
+      allow: ["./src"],
+    },
+  },
+});
