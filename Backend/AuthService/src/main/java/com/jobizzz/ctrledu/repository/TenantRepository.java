@@ -17,7 +17,4 @@ public interface TenantRepository extends JpaRepository<Tenant,Long> {
 
     List<Tenant> findAll();
 
-    Optional<Tenant> findByTenantId(Long tenantId);
-
-
 }
