@@ -12,11 +12,12 @@ import java.time.LocalDateTime;
 @Table(name = "CE_TENANTS")
 public class Tenant {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CE_TENANT_ID")
-    private Long tenantId;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "CE_TENANT_ID")
+//    private Long tenantId;
 
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "org_id_seq")
     @SequenceGenerator(name = "org_id_seq", sequenceName = "organization_id_seq", allocationSize = 1)
     @Column(name = "CE_ORGANIZATION_ID", unique = true, nullable = false)

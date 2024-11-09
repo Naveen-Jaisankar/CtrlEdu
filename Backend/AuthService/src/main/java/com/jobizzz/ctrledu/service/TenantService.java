@@ -30,6 +30,7 @@ public class TenantService {
             tenantRepository.save(tenant);
 
             createSchema(schemaName);
+            prepopulateTables(schemaName);
 
         }catch (Exception e){
             System.err.println("Exception while registering tenant for the organization : " + organizationName);

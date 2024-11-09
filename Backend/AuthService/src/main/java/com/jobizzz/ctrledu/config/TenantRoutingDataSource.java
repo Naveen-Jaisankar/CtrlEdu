@@ -21,8 +21,8 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
         super.afterPropertiesSet();
     }
 
-    public void addDataSource(String tenantId, DataSource dataSource){
-        resolvedDataSources.put(tenantId,dataSource);
+    public void addDataSource(String schemaName, DataSource dataSource){
+        resolvedDataSources.put(schemaName,dataSource);
         super.setTargetDataSources(resolvedDataSources);
         super.afterPropertiesSet();
     }
