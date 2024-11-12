@@ -1,1 +1,6 @@
 Frontend/.DS_Store
+Backend/NotificationService/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+Backend/NotificationService/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+Backend/NotificationService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+Backend/NotificationService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+Frontend/.hintrc
