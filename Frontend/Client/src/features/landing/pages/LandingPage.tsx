@@ -1,18 +1,22 @@
-// src/landing/LandingPage.tsx
-
 import React from "react";
-import Header from "../../common/components/header/Header";
+import FeatureSection from "../components/FeaturesSection";
+import Testimonials from "../components/Testimonials";
+import Footer from "../components/Footer";
+import HeroSection from "../components/HeroSection";
+import Navbar from "../components/Navbar";
+import Workflow from "../components/Workflow";
 
 const LandingPage: React.FC = () => {
   return (
-    <div>
-      <Header />
-      {/* Add other sections for the landing page here */}
-      <main>
-        <h1>Welcome to CtrlEdu</h1>
-        <p>Your all-in-one campus management system.</p>
-        {/* Additional content can go here */}
-      </main>
+    <div className="bg-white dark:bg-neutral-900 text-black dark:text-white">
+      <Navbar />
+      <div className="max-w-7xl mx-auto pt-20 px-6 space-y-20">
+        <HeroSection />
+        <FeatureSection />
+        <Workflow />
+        <Testimonials />
+        <Footer />
+      </div>
     </div>
   );
 };
