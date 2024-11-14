@@ -17,13 +17,14 @@ public class TenantFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String schemaName = request.getHeader("X-Tenant-Id");
 
-        if(schemaName != null && !schemaName.isEmpty()){
+        if (schemaName != null && !schemaName.isEmpty()) {
             ThreadContext.setThreadContext(schemaName);
+            System.out.println("Tenant schema set to: " + schemaName);
         }
 
-        try{
-            filterChain.doFilter(request,response);
-        }finally {
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
             ThreadContext.clear();
         }
     }
