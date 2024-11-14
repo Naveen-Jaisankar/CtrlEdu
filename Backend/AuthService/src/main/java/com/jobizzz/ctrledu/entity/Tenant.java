@@ -12,10 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "CE_TENANTS")
 public class Tenant {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "CE_TENANT_ID")
-//    private Long tenantId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "org_id_seq")
@@ -31,4 +27,7 @@ public class Tenant {
 
     @Column(name = "CE_CREATED_AT")
     private LocalDateTime createdAt;
+
+    @Column(name = "CE_DATABASE_NAME")  // New field to store the database name
+    private String databaseName;
 }
