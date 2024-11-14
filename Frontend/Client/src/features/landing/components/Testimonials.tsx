@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { testimonials } from "../../../constants";
 
 type Testimonial = {
@@ -16,9 +17,14 @@ const Testimonials: React.FC = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto px-4">
         {testimonials.map((testimonial: Testimonial, index: number) => (
-          <div
+          <motion.div
             key={index}
             className="bg-neutral-100 dark:bg-neutral-800 rounded-md p-6 text-md border border-neutral-300 dark:border-neutral-700 font-light flex flex-col justify-between"
+            whileHover={{
+              scale: 1.05, // Enlarge the card slightly
+              boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.2)", // Add shadow for pop-up effect
+              transition: { duration: 0.3 }, // Smooth transition
+            }}
           >
             <p className="text-neutral-700 dark:text-neutral-300 mb-4">
               {testimonial.text}
@@ -38,7 +44,7 @@ const Testimonials: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

@@ -2,6 +2,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "../../../assets/logo1.svg";
 import { navItems } from "../../../constants";
+import { Link } from "react-scroll";
 
 type NavItem = {
   href: string;
@@ -26,12 +27,15 @@ const Navbar: React.FC = () => {
           <ul className="hidden lg:flex ml-14 space-x-12">
             {navItems.map((item: NavItem, index: number) => (
               <li key={index}>
-                <a
-                  href={item.href}
-                  className="hover:text-orange-500 transition-colors"
+                <Link
+                  to={item.href}
+                  smooth={true}
+                  duration={500}
+                  offset={-120} // Adjust for sticky navbar height
+                  className="cursor-pointer hover:text-orange-500 transition-colors"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -60,12 +64,16 @@ const Navbar: React.FC = () => {
             <ul className="space-y-6">
               {navItems.map((item: NavItem, index: number) => (
                 <li key={index} className="text-white text-lg">
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
+                    smooth={true}
+                    duration={500}
+                    offset={-80} // Adjust for sticky navbar height
+                    className="cursor-pointer"
                     onClick={() => setMobileDrawerOpen(false)}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

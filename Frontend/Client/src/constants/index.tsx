@@ -14,12 +14,11 @@ import user5 from "../assets/profile-pictures/user5.jpg";
 import user6 from "../assets/profile-pictures/user6.jpg";
 
 export const navItems = [
-  { label: "Features", href: "#" },
-  { label: "Why CtrlEdu", href: "#" },
-  { label: "Pricing", href: "#" },
-  { label: "Ctrl Suite", href: "#" },
-  { label: "Blog", href: "#" },
-  { label: "FAQ", href: "#" },
+  { label: "Features", href: "features" },
+  { label: "Why CtrlEdu", href: "workflow" },
+  //   // { label: "Pricing", href: "#" },
+  { label: "Testimonials", href: "testimonials" },
+  { label: "Ctrl Suite", href: "footer" },
 ];
 
 export const testimonials = [
