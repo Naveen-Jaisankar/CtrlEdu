@@ -26,6 +26,7 @@ public class DataSourceConfig {
     public DataSource dataSource() {
         TenantRoutingDataSource tenantRoutingDataSource = new TenantRoutingDataSource();
 
+        System.out.println("Default data source : " + defaultDbUrl );
         // Default DataSource for common database
         DataSource defaultDataSource = DataSourceBuilder.create()
                 .url(defaultDbUrl)

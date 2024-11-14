@@ -16,13 +16,13 @@ public class TenantDataSourceInitializer {
     private final JdbcTemplate jdbcTemplate;
     private final TenantRoutingDataSource tenantRoutingDataSource;
 
-    @Value("${spring.datasource.tenant.url}")
+    @Value("${spring.datasource.tenant.url:jdbc:postgresql://localhost:5432/}")
     private String tenantDbUrlPrefix;
 
-    @Value("${spring.datasource.tenant.username}")
+    @Value("${spring.datasource.tenant.username:postgres}")
     private String tenantDbUsername;
 
-    @Value("${spring.datasource.tenant.password}")
+    @Value("${spring.datasource.tenant.password:password}")
     private String tenantDbPassword;
 
     @Autowired
@@ -37,11 +37,13 @@ public class TenantDataSourceInitializer {
         String sql = "SELECT CE_SCHEMA_NAME FROM CE_TENANTS";
         jdbcTemplate.query(sql, (rs) -> {
             String schemaName = rs.getString("CE_SCHEMA_NAME");
+            System.out.println(tenantDbUsername);
+            System.out.println("Initializing DataSource for schema: " + schemaName + ", URL: " + tenantDbUrlPrefix);
 
             DataSource tenantDataSource = DataSourceBuilder.create()
-                    .url(tenantDbUrlPrefix + schemaName)
-                    .username(tenantDbUsername)
-                    .password(tenantDbPassword)
+                    .url("jdbc:postgresql://localhost:5432/" + schemaName)
+                    .username("postgres")
+                    .password("password")
                     .build();
 
             tenantRoutingDataSource.addDataSource(schemaName, tenantDataSource);
