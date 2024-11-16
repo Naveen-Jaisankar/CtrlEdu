@@ -1,1 +1,0 @@
-Custom React hooks that encapsulate reusable logic can go here. Examples include hooks for managing authentication state, handling API requests, or managing forms. These hooks can be imported and used across the app.

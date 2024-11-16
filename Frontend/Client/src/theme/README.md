@@ -1,1 +1,0 @@
-This folder is typically used for managing the application’s theme settings, such as colors, fonts, and global styles. You might find theme configuration files or files for defining a light and dark mode here.
