@@ -1,0 +1,12 @@
+@import "./colors";
+@import "./fonts";
+
+body {
+  font-family: $defaultFontFamily;
+  color: $primaryFontColor;
+  background-color: $backgroundColor;
+}
+
+.header {
+  background-color: $primaryColor;
+}
