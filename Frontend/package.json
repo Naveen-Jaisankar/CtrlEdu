@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "styled-jsx": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/styled-jsx": "^3.4.4"
+  }
+}
