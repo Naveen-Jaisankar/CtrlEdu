@@ -19,13 +19,24 @@ const Login: React.FC = () => {
                 password,
             });
 
-            // Store the access token and refresh token in localStorage
-            const { accessToken, refreshToken } = response.data;
+            // Extract the access token, refresh token, and role
+            const { accessToken, refreshToken, role } = response.data;
+            
+            // Store tokens and role in localStorage
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('role', role);
 
-            // Navigate to the dashboard after successful login
-            navigate('/dashboard');
+            // Navigate to the appropriate dashboard based on the role
+            if (role === 'super-admin') {
+                navigate('/admin-dashboard');
+            } else if (role === 'teacher') {
+                navigate('/teacher-dashboard');
+            } else if (role === 'student') {
+                navigate('/student-dashboard');
+            } else {
+                setError('Invalid role. Please contact support.');
+            }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 // Handle error from backend

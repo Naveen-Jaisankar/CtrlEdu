@@ -4,3 +4,4 @@ Backend/NotificationService/target/maven-status/maven-compiler-plugin/compile/de
 Backend/NotificationService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
 Backend/NotificationService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
 Frontend/.hintrc
+Backend/NotificationService/target/*
