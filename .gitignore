@@ -5,3 +5,4 @@ Backend/NotificationService/target/maven-status/maven-compiler-plugin/testCompil
 Backend/NotificationService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
 Frontend/.hintrc
 Backend/NotificationService/target/*
+Backend/NotificationService/target/classes/com/jobizzz/ctrledu/notification/NotificationServiceApplication.class
