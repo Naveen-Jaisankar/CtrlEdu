@@ -1,5 +1,7 @@
 package com.jobizzz.ctrledu.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +10,24 @@ import lombok.Setter;
 @Setter
 @Data
 public class RegisterRequest {
-    private String name;
+
+    @JsonProperty("organization_name")
+    @NotNull(message = "Organization name cannot be null")
+    private String organizationName;
+
+    @JsonProperty("email")
+    @NotNull(message = "Email cannot be null")
     private String email;
-    private String role;
+
+    @JsonProperty("password")
+    @NotNull(message = "Password cannot be null")
     private String password;
-    private String invitationCode;
-    private String firstName; // New field
-    private String lastName;  // New field
+
+    @JsonProperty("first_name")
+    @NotNull(message = "FirsName cannot be null")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    @NotNull(message = "LastName cannot be null")
+    private String lastName;
 }
