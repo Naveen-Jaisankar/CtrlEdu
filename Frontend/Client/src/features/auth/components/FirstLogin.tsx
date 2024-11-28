@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import authService from '../services/authService';
+import authService from '../../../services/authService';
 
 const FirstLogin: React.FC = () => {
     const [step, setStep] = useState(1); // 1: Code Verification, 2: Set Email and Password
