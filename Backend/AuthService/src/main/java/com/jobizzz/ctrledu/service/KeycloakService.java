@@ -1,16 +1,21 @@
 package com.jobizzz.ctrledu.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobizzz.ctrledu.dto.AddUserRequest;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class KeycloakService {
@@ -79,5 +84,45 @@ public class KeycloakService {
         keycloak.realm(realm).users().get(userId).resetPassword(credential);
 
         System.out.println("Password updated successfully for user with email: " + email);
+    }
+
+
+    public String fetchKeycloakPublicKey() throws IOException {
+        String url = keycloakServerUrl + "/realms/" + realm;
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(url, String.class);
+        Map<String, Object> realmInfo = new ObjectMapper().readValue(response, Map.class);
+        return (String) realmInfo.get("public_key");
+    }
+
+    public String getClientSecret() {
+        String clientSecret = null;
+        try{
+            Keycloak keycloak = KeycloakBuilder.builder()
+                    .serverUrl(keycloakServerUrl)
+                    .realm("master")
+                    .clientId("admin-cli")
+                    .username("admin")
+                    .password("admin")
+                    .build();
+
+            // Find the client by client ID
+            ClientRepresentation client = keycloak.realm(realm)
+                    .clients()
+                    .findByClientId("ctrledu-client")
+                    .get(0);
+
+            // Retrieve the secret
+            clientSecret = keycloak.realm(realm)
+                    .clients()
+                    .get(client.getId())
+                    .getSecret()
+                    .getValue();
+
+            return clientSecret;
+        }catch (Exception e){
+            System.err.println("Exception while fetching client secret from KeyCloak");
+        }
+        return clientSecret;
     }
 }

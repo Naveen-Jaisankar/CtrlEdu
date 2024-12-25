@@ -82,54 +82,6 @@ public class AuthController {
         }
     }
 
-    // Fetch the public key dynamically from Keycloak
-    private String fetchKeycloakPublicKey() throws IOException {
-        String url = keycloakServerUrl + "/realms/" + realm;
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(url, String.class);
-        Map<String, Object> realmInfo = new ObjectMapper().readValue(response, Map.class);
-        return (String) realmInfo.get("public_key");
-    }
-
-    // Convert PEM public key to PublicKey object
-    private PublicKey getPublicKeyFromPEM(String publicKeyPem) throws Exception {
-        publicKeyPem = publicKeyPem.replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s", "");
-        byte[] decodedKey = Base64.getDecoder().decode(publicKeyPem);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePublic(new X509EncodedKeySpec(decodedKey));
-    }
-
-    // Determine the highest priority role
-    private String getRole(List<String> roles) {
-        if (roles.contains("super-admin")) {
-            return "super-admin";
-        } else if (roles.contains("teacher")) {
-            return "teacher";
-        } else if (roles.contains("student")) {
-            return "student";
-        }
-        return null; // No recognized role found
-    }
-
-    // Get the redirect path for a given role
-    private String getRedirectPathForRole(String role) {
-        switch (role) {
-            case "super-admin":
-                return "/admin-dashboard";
-            case "teacher":
-                return "/teacher-dashboard";
-            case "student":
-                return "/student-dashboard";
-            default:
-                return "/";
-        }
-    }
-
-
-
-
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCode(@RequestBody VerifyCodeRequest request) {
         try {
@@ -156,6 +108,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to verify code");
         }
     }
+
+
 
 }
 

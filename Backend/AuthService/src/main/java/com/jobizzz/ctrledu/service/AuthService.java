@@ -40,6 +40,9 @@ public class AuthService {
     @Autowired
     private OrganizationReporsitory organizationReporsitory;
 
+    @Autowired
+    private KeycloakService keycloakService;
+
     private final String keycloakServerUrl = "http://localhost:8080/";
     private final String realm = "CtrlEdu";
     private final String clientId = "ctrledu-client";
@@ -106,7 +109,7 @@ public class AuthService {
             String email = loginRequest.getEmail();
             String password = loginRequest.getPassword();
 
-            String clientSecret = getClientSecret();
+            String clientSecret = keycloakService.getClientSecret();
 
 
             // Authenticate with Keycloak and get the access token
@@ -123,7 +126,7 @@ public class AuthService {
             AccessTokenResponse tokenResponse = keycloak.tokenManager().getAccessToken();
 
             // Retrieve the public key dynamically from Keycloak
-            String publicKeyPem = fetchKeycloakPublicKey();
+            String publicKeyPem = keycloakService.fetchKeycloakPublicKey();
             PublicKey publicKey = getPublicKeyFromPEM(publicKeyPem);
 
             // Parse and validate the JWT using the public key
@@ -149,14 +152,11 @@ public class AuthService {
                 response = new ResponseDTO(HttpStatus.UNAUTHORIZED,"Role not assigned",null);
             }
 
-            // Add redirect path based on role
-            String redirectPath = getRedirectPathForRole(role);
 
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setAccessToken(tokenResponse.getToken());
             loginResponse.setRefreshToken(tokenResponse.getRefreshToken());
             loginResponse.setRole(role);
-            loginResponse.setRedirectedPath(redirectPath);
 
             return new ResponseDTO(HttpStatus.OK,"User Logged in successfully", loginResponse);
 
@@ -165,15 +165,6 @@ public class AuthService {
             response = new ResponseDTO(HttpStatus.UNAUTHORIZED,"Invalid credentials or token validation failed.",null);
         }
         return response;
-    }
-
-    // Fetch the public key dynamically from Keycloak
-    private String fetchKeycloakPublicKey() throws IOException {
-        String url = keycloakServerUrl + "/realms/" + realm;
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(url, String.class);
-        Map<String, Object> realmInfo = new ObjectMapper().readValue(response, Map.class);
-        return (String) realmInfo.get("public_key");
     }
 
     // Convert PEM public key to PublicKey object
@@ -198,46 +189,7 @@ public class AuthService {
         return null; // No recognized role found
     }
 
-    // Get the redirect path for a given role
-    private String getRedirectPathForRole(String role) {
-        switch (role) {
-            case "super-admin":
-                return "/admin-dashboard";
-            case "teacher":
-                return "/teacher-dashboard";
-            case "student":
-                return "/student-dashboard";
-            default:
-                return "/";
-        }
-    }
-
-    private String getClientSecret() {
-        Keycloak keycloak = KeycloakBuilder.builder()
-                .serverUrl(keycloakServerUrl)
-                .realm("master")
-                .clientId("admin-cli")
-                .username("admin")
-                .password("admin")
-                .build();
-
-        // Find the client by client ID
-        ClientRepresentation client = keycloak.realm(realm)
-                .clients()
-                .findByClientId(clientId)
-                .get(0);
-
-        // Retrieve the secret
-        String clientSecret = keycloak.realm(realm)
-                .clients()
-                .get(client.getId())
-                .getSecret()
-                .getValue();
-
-        return clientSecret;
-    }
-
-
+    
     public SignupResponse addRecordsToUserAndOrganization(RegisterRequest registerRequest){
         SignupResponse signupResponse = new SignupResponse();
         try{

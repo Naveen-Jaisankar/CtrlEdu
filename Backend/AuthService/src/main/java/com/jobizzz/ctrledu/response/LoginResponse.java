@@ -15,8 +15,6 @@ public class LoginResponse {
 
     public String role;
 
-    public String redirectedPath;
-
     public LoginResponse() {
     }
 }
