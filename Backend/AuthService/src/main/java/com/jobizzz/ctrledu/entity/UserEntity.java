@@ -5,38 +5,48 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "CE_USERS") // Specify the table name
 @Getter
 @Setter
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "CE_USER_ID") // Specify the column name
+    private Long userId;
 
-    private String name; // Organization name (null for teacher/student)
+    @Column(name = "CE_USER_FIRST_NAME") // Specify the column name
+    private String userFirstName;
 
-    private String firstName; // First name
-    private String lastName;  // Last name
+    @Column(name = "CE_USER_LAST_NAME") // Specify the column name
+    private String userLastName;
 
-    @Column(unique = true, nullable = false)
-    private String email; // Email for login
+    @Column(name = "CE_USER_EMAIL", unique = true, nullable = false) // Specify the column name
+    private String userEmail;
 
-    private String role; // Role: super-admin, teacher, student
+    @Column(name = "CE_USER_ROLE") // Specify the column name
+    private String userRole;
 
-    private String uniqueCode; // Unique code (used for teacher/student registration)
+    @Column(name = "CE_UNIQUE_CODE") // Specify the column name
+    private String uniqueCode;
 
-    private boolean used; // Whether the unique code has been used
+    @Column(name = "CE_IS_CODE_USED") // Specify the column name
+    private boolean isCodeUsed;
+
+    @ManyToOne // Define the relationship as Many-to-One
+    @JoinColumn(name = "CE_ORG_ID", referencedColumnName = "CE_ORG_ID") // Foreign key reference
+    private OrganizationEntity orgId; // Reference to the OrganizationEntity
+
     // Constructors
     public UserEntity() {}
 
-    public UserEntity(String name, String firstName, String lastName, String email, String role, String uniqueCode, boolean used) {
-        this.name = name;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.role = role;
+    public UserEntity(String userFirstName, String userLastName, String userEmail, String userRole, String uniqueCode, boolean isCodeUsed, OrganizationEntity orgId) {
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userEmail = userEmail;
+        this.userRole = userRole;
         this.uniqueCode = uniqueCode;
-        this.used = used;
+        this.isCodeUsed = isCodeUsed;
+        this.orgId = orgId;
     }
-
 }

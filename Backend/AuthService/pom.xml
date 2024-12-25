@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jobizzz</groupId>
-	<artifactId>ctrledu</artifactId>
+	<artifactId>AuthService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AuthService</name>
 	<description>Authentication Service for Ctrl+Edu</description>
