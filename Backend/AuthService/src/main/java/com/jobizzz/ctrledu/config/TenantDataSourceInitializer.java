@@ -45,8 +45,8 @@ public class TenantDataSourceInitializer {
         availableDatabases.forEach(dbName -> {
             DataSource dataSource = DataSourceBuilder.create()
                     .url("jdbc:postgresql://localhost:5432/" + dbName.trim())
-                    .username(defaultDbUsername)
-                    .password(defaultDbPassword)
+                    .username("postgres")
+                    .password("Raghul_2002")
                     .build();
             tenantRoutingDataSource.addDataSource(dbName, dataSource);
             dataSources.put(dbName, dataSource); // Store in map for retrieval

@@ -1,5 +1,6 @@
 package com.jobizzz.ctrledu.config;
 
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -37,4 +38,12 @@ public class DataSourceConfig {
         tenantRoutingDataSource.setDefaultTargetDataSource(defaultDataSource);
         return tenantRoutingDataSource;
     }
+
+    @Bean
+    public MultiTenantConnectionProvider multiTenantConnectionProvider(DataSource dataSource) {
+        return new TenantConnectionProvider(dataSource);
+    }
+
+
+
 }

@@ -2,8 +2,8 @@ package com.jobizzz.ctrledu.interceptor;
 
 import com.jobizzz.ctrledu.config.TenantRoutingDataSource;
 import com.jobizzz.ctrledu.dto.ThreadContext;
-import com.jobizzz.ctrledu.entity.Tenant;
-import com.jobizzz.ctrledu.repository.TenantRepository;
+import com.jobizzz.ctrledu.entity.OrganizationEntity;
+import com.jobizzz.ctrledu.repository.OrganizationRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,12 +18,12 @@ import java.util.Optional;
 @Component
 public class TenantFilter extends OncePerRequestFilter {
 
-    private final TenantRepository tenantRepository;
+    private final OrganizationRepository organizationRepository;
     private final TenantRoutingDataSource tenantRoutingDataSource;
 
     @Autowired
-    public TenantFilter(TenantRepository tenantRepository, TenantRoutingDataSource tenantRoutingDataSource) {
-        this.tenantRepository = tenantRepository;
+    public TenantFilter(OrganizationRepository organizationRepository, TenantRoutingDataSource tenantRoutingDataSource) {
+        this.organizationRepository = organizationRepository;
         this.tenantRoutingDataSource = tenantRoutingDataSource;
     }
 
@@ -32,16 +32,16 @@ public class TenantFilter extends OncePerRequestFilter {
         String orgName = request.getHeader("X-Tenant-Id");
 
         if (orgName != null && !orgName.isEmpty()) {
-            Optional<Tenant> tenantOpt = tenantRepository.findBySchemaName(orgName);
+            Optional<OrganizationEntity> tenantOpt = organizationRepository.findBySchemaName(orgName);
 
             if (tenantOpt.isPresent()) {
-                Tenant tenant = tenantOpt.get();
+                OrganizationEntity organizationEntity = tenantOpt.get();
 
                 // Set the context for tenant schema and database
-                ThreadContext.setThreadContext(tenant.getSchemaName(), tenant.getDatabaseName());
+                ThreadContext.setThreadContext(organizationEntity.getSchemaName(), organizationEntity.getDatabaseName());
 
                 // Set the database and schema search path
-                tenantRoutingDataSource.setSchema(tenant.getSchemaName());
+                tenantRoutingDataSource.setSchema(organizationEntity.getSchemaName());
 
                 System.out.println("Tenant database and schema set for: " + orgName);
             } else {
