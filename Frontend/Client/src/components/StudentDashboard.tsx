@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authService from '../../../services/authService';
+import authService from "../services/authService";
 
 const StudentDashboard: React.FC = () => {
     const [userData, setUserData] = useState<{ email: string } | null>(null);

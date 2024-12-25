@@ -1,12 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./features/auth/components/Login";
-import Register from "./features/auth/components/Register";
-import AdminDashboard from "./features/auth/components/AdminDashboard";
-import TeacherDashboard from "./features/auth/components/TeacherDashboard";
-import StudentDashboard from "./features/auth/components/StudentDashboard";
-import FirstLogin from "./features/auth/components/FirstLogin";
-import LandingPage from "./features/landing/pages/LandingPage";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import AdminDashboard from "./components/AdminDashboard";
+import TeacherDashboard from "./components/TeacherDashboard";
+import StudentDashboard from "./components/StudentDashboard";
+import FirstLogin from "./components/FirstLogin";
 
 const App: React.FC = () => {
     // Helper function to check if the user is authenticated
@@ -22,12 +21,12 @@ const App: React.FC = () => {
     // Protected Route Component
     const ProtectedRoute: React.FC<{ children: React.ReactElement; role: string }> = ({ children, role }) => {
         if (!isAuthenticated()) {
-            return <Navigate to="/login" replace />; // Redirect to login if not authenticated
+            return <Navigate to="/" replace />; // Redirect to login if not authenticated
         }
 
         const userRole = getUserRole();
         if (userRole !== role) {
-            return <Navigate to="/" replace />; // Redirect to landing page if the role doesn't match
+            return <Navigate to="/" replace />; // Redirect to login if the role doesn't match
         }
 
         return children;
@@ -37,8 +36,7 @@ const App: React.FC = () => {
         <Router>
             <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/first-login" element={<FirstLogin />} />
 

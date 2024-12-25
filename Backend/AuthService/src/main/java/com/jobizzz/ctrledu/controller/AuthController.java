@@ -55,9 +55,6 @@ public class AuthController {
 
             // Save the organization in the database
             UserEntity organization = new UserEntity();
-            organization.setName(request.getOrganizationName());
-            organization.setEmail(request.getEmail());
-            organization.setRole(role); // Always set to super-admin
             organization.setOrgId(1l);
             organization.setUserEmail(request.getEmail());
             organization.setUserRole(role); // Always set to super-admin
