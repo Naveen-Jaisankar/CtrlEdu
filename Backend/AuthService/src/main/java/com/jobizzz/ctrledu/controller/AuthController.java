@@ -1,6 +1,7 @@
 package com.jobizzz.ctrledu.controller;
 
-import com.jobizzz.ctrledu.request.SignupRequest;
+import com.jobizzz.ctrledu.dto.LoginRequest;
+import com.jobizzz.ctrledu.dto.RegisterRequest;
 import com.jobizzz.ctrledu.dto.VerifyCodeRequest;
 import com.jobizzz.ctrledu.entity.UserEntity;
 import com.jobizzz.ctrledu.repository.UserRepository;
@@ -41,7 +42,7 @@ public class AuthController {
     private final String clientId = "ctrledu-client";
     private final String clientSecret = "NqTNda6RzhlqnK7W9QSg66tdheVteaEi";
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody SignupRequest request) {
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
         try {
             // Validate required fields
             if (request.getEmail() == null || request.getEmail().isEmpty() ||
@@ -55,9 +56,9 @@ public class AuthController {
 
             // Save the organization in the database
             UserEntity organization = new UserEntity();
-            organization.setOrgId(1l);
-            organization.setUserEmail(request.getEmail());
-            organization.setUserRole(role); // Always set to super-admin
+            organization.setName(request.getName());
+            organization.setEmail(request.getEmail());
+            organization.setRole(role); // Always set to super-admin
             userRepository.save(organization);
 
             // Register the organization in Keycloak
@@ -203,7 +204,7 @@ public class AuthController {
     public ResponseEntity<?> verifyCode(@RequestBody VerifyCodeRequest request) {
         try {
             // Step 1: Validate the unique code
-            Optional<UserEntity> userOptional = userRepository.findByUserUniqueCode(request.getCode());
+            Optional<UserEntity> userOptional = userRepository.findByUniqueCode(request.getCode());
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
             }
@@ -212,7 +213,7 @@ public class AuthController {
 
             // Step 2: Update the Keycloak password if email and password are provided
             if (request.getEmail() != null && request.getPassword() != null) {
-                user.setUserEmail(request.getEmail());
+                user.setEmail(request.getEmail());
                 userRepository.save(user); // Update email in DB
 
                 keycloakService.updateKeycloakPassword(request.getEmail(), request.getPassword());

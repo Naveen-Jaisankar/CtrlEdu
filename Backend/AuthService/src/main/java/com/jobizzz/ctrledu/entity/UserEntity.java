@@ -7,35 +7,36 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name ="CE_USERS")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CE_USER_ID", unique = true, nullable = false)
-    private Long userId;
+    private Long id;
 
-    @Column(name = "CE_ORGANIZATION_ID", unique = true, nullable = false)
-    private Long orgId;
+    private String name; // Organization name (null for teacher/student)
 
-    @Column(name = "CE_USER_FIRSTNAME", nullable = false)
-    private String userFirstName;
+    private String firstName; // First name
+    private String lastName;  // Last name
 
-    @Column(name = "CE_USER_LASTNAME",nullable = false)
-    private String userLastName;
+    @Column(unique = true, nullable = false)
+    private String email; // Email for login
 
-    @Column(name = "CE_USER_EMAIL", unique = true)
-    private String userEmail;
+    private String role; // Role: super-admin, teacher, student
 
-    @Column(name = "CE_USER_ROLE", nullable = false)
-    private String userRole;
+    private String uniqueCode; // Unique code (used for teacher/student registration)
 
-    @Column(name = "CE_USER_UNIQUE_CODE", unique = true)
-    private String userUniqueCode;
+    private boolean used; // Whether the unique code has been used
+    // Constructors
+    public UserEntity() {}
 
-    @Column(name = "CE_IS_ACTIVATED")
-    private String isActivated;
-
-
+    public UserEntity(String name, String firstName, String lastName, String email, String role, String uniqueCode, boolean used) {
+        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = role;
+        this.uniqueCode = uniqueCode;
+        this.used = used;
+    }
 
 }

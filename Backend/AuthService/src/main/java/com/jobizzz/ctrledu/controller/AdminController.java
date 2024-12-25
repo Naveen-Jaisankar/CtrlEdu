@@ -29,7 +29,7 @@ public class AdminController {
     @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody AddUserRequest request) {
         // Check for duplicate email
-        if (userRepository.findByUserEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
         }
 
@@ -39,11 +39,11 @@ public class AdminController {
 
             // Save user in the database
             UserEntity user = new UserEntity();
-            user.setUserFirstName(request.getFirstName());
-            user.setUserLastName(request.getLastName());
-            user.setUserEmail(request.getEmail());
-            user.setUserRole(request.getRole());
-            user.setUserUniqueCode(uniqueCode);
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setEmail(request.getEmail());
+            user.setRole(request.getRole());
+            user.setUniqueCode(uniqueCode);
             userRepository.saveAndFlush(user);
 
 

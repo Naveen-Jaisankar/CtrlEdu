@@ -79,13 +79,6 @@
 			<artifactId>keycloak-admin-client</artifactId>
 			<version>21.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>6.2.2.Final</version>
-		</dependency>
-
-
 
 		<!-- PostgreSQL Driver or your database of choice -->
 		<dependency>

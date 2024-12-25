@@ -1,8 +1,8 @@
 package com.jobizzz.ctrledu.controller;
 
-import com.jobizzz.ctrledu.entity.OrganizationEntity;
+import com.jobizzz.ctrledu.entity.Tenant;
 import com.jobizzz.ctrledu.request.SignupRequest;
-import com.jobizzz.ctrledu.service.AuthService;
+import com.jobizzz.ctrledu.service.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 public class SignupController {
 
     @Autowired
-    private AuthService authService;
+    private TenantService tenantService;
 
     @PostMapping
-    public ResponseEntity<OrganizationEntity> signup(@RequestBody SignupRequest signupRequest){
-        OrganizationEntity organizationEntity = authService.register(signupRequest);
-        return ResponseEntity.ok(organizationEntity);
+    public ResponseEntity<Tenant> signup(@RequestBody SignupRequest signupRequest){
+        Tenant tenant = tenantService.registerTenant(signupRequest.getOrganizationName());
+        return ResponseEntity.ok(tenant);
     }
 }
-

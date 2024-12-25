@@ -30,7 +30,6 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**").permitAll() // Allow public access to auth endpoints
-                .requestMatchers("/api/signup/**").permitAll()
                 .requestMatchers("/api/admin/**").hasAuthority("super-admin") // Super-admin-only endpoints
                 .anyRequest().authenticated()
                 .and()
