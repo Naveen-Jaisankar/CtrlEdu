@@ -43,11 +43,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    private final String keycloakServerUrl = "http://localhost:8080/";
-    private final String realm = "CtrlEdu";
-    private final String clientId = "ctrledu-client";
-    private final String clientSecret = "PcpaM0nZps5MHHNmXBH9qDCvDKZZBGME";
-
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequest request) {
         try {
@@ -55,6 +50,7 @@ public class AuthController {
             if (request.getEmail() == null || request.getEmail().isEmpty() || request.getPassword() == null || request.getPassword().isEmpty() || request.getFirstName() == null || request.getLastName() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST,"Email, password, first name, and last name are required.", null));
             }
+
             ResponseDTO response = authService.registerUser(request);
 
             return ResponseEntity.status(response.getStatus()).body(response);
