@@ -140,7 +140,7 @@ public class AuthService {
             // Extract roles from the token
             Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
             if (realmAccess == null || !realmAccess.containsKey("roles")) {
-                response = new ResponseDTO(HttpStatus.UNAUTHORIZED,"User does not have assigned roles.",null);
+                return new ResponseDTO(HttpStatus.UNAUTHORIZED,"User does not have assigned roles.",null);
             }
 
             @SuppressWarnings("unchecked")
@@ -149,7 +149,7 @@ public class AuthService {
             // Determine the role
             String role = getRole(roles);
             if (role == null) {
-                response = new ResponseDTO(HttpStatus.UNAUTHORIZED,"Role not assigned",null);
+                return new ResponseDTO(HttpStatus.UNAUTHORIZED,"Role not assigned",null);
             }
 
 
@@ -162,9 +162,8 @@ public class AuthService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            response = new ResponseDTO(HttpStatus.UNAUTHORIZED,"Invalid credentials or token validation failed.",null);
+            return new ResponseDTO(HttpStatus.UNAUTHORIZED,"Invalid credentials or token validation failed.",null);
         }
-        return response;
     }
 
     // Convert PEM public key to PublicKey object

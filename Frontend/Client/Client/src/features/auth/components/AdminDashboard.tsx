@@ -33,6 +33,7 @@ const AdminDashboard: React.FC = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
         }
       );
+      console.log(response.data);
       setUsers(response.data);
     } catch (error) {
       console.error("Failed to fetch users", error);
@@ -134,9 +135,9 @@ const AdminDashboard: React.FC = () => {
                   key={index}
                   className="border-b border-neutral-600 hover:bg-neutral-700"
                 >
-                  <td className="py-4 px-6">{`${user.firstName} ${user.lastName}`}</td>
-                  <td className="py-4 px-6">{user.email}</td>
-                  <td className="py-4 px-6">{user.role}</td>
+                  <td className="py-4 px-6">{`${user.userFirstName} ${user.userLastName}`}</td>
+                  <td className="py-4 px-6">{user.userEmail}</td>
+                  <td className="py-4 px-6">{user.userRole}</td>
                 </tr>
               ))}
             </tbody>

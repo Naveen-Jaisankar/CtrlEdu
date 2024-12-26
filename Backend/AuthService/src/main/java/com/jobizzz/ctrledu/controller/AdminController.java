@@ -34,6 +34,7 @@ public class AdminController {
         }
 
         try {
+            //TODO Instead of generating a unique code, encrypt userid-timestamp-orgid
             // Generate unique code
             String uniqueCode = UUID.randomUUID().toString();
 
@@ -55,7 +56,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add user");
         }
     }
-    @PreAuthorize("hasRole('super-admin')")
+
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
         try {
