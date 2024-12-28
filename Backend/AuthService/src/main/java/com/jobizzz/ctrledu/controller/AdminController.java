@@ -1,8 +1,12 @@
 package com.jobizzz.ctrledu.controller;
 
 import com.jobizzz.ctrledu.dto.AddUserRequest;
+import com.jobizzz.ctrledu.dto.ThreadContext;
+import com.jobizzz.ctrledu.entity.OrganizationEntity;
 import com.jobizzz.ctrledu.entity.UserEntity;
+import com.jobizzz.ctrledu.repository.OrganizationRepository;
 import com.jobizzz.ctrledu.repository.UserRepository;
+import com.jobizzz.ctrledu.service.AdminService;
 import com.jobizzz.ctrledu.service.KeycloakService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,10 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -26,6 +27,12 @@ public class AdminController {
     @Autowired
     private KeycloakService keycloakService;
 
+    @Autowired
+    private AdminService adminService;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
     @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody AddUserRequest request) {
         // Check for duplicate email
@@ -34,6 +41,14 @@ public class AdminController {
         }
 
         try {
+            String email = ThreadContext.getEmail();
+
+            Long orgId = adminService.getAdminOrgId(email);
+
+            OrganizationEntity organization = organizationRepository.findById(orgId)
+                    .orElseThrow(() -> new IllegalStateException("Organization not found for ID: " + orgId));
+
+
             //TODO Instead of generating a unique code, encrypt userid-timestamp-orgid
             // Generate unique code
             String uniqueCode = UUID.randomUUID().toString();
@@ -45,6 +60,7 @@ public class AdminController {
             user.setUserEmail(request.getEmail());
             user.setUserRole(request.getRole());
             user.setUniqueCode(uniqueCode);
+            user.setOrgId(organization);
             userRepository.saveAndFlush(user);
 
 
@@ -60,8 +76,19 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
         try {
+
+            String email = ThreadContext.getEmail();
+
+            if (email == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No email found in context");
+            }
+            // Fetch all users belonging to the same organization
+            Long orgId = adminService.getAdminOrgId(email);
+
+            List<UserEntity> users = userRepository.findByOrgIdExcludingSuperAdmin(orgId);
+
             // Fetch all users from the database
-            return ResponseEntity.ok(userRepository.findAll());
+            return ResponseEntity.ok(users);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch users");

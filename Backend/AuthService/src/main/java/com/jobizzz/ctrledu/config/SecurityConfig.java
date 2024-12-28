@@ -1,5 +1,6 @@
 package com.jobizzz.ctrledu.config;
 
+import com.jobizzz.ctrledu.interceptor.RequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,7 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,6 +31,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .cors().and()
+                .addFilterAfter(new RequestContextFilter(), BearerTokenAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**").permitAll() // Allow public access to auth endpoints
                 .requestMatchers("/api/admin/**").hasAuthority("super-admin") // Super-admin-only endpoints
@@ -76,4 +80,10 @@ public class SecurityConfig {
 
         return source;
     }
+
+    @Bean(name = "customRequestContextFilter")
+    public RequestContextFilter requestContextFilter() {
+        return new RequestContextFilter();
+    }
+
 }

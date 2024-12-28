@@ -1,11 +1,10 @@
 package com.jobizzz.ctrledu.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobizzz.ctrledu.dto.LoginRequest;
 import com.jobizzz.ctrledu.dto.RegisterRequest;
 import com.jobizzz.ctrledu.entity.OrganizationEntity;
 import com.jobizzz.ctrledu.entity.UserEntity;
-import com.jobizzz.ctrledu.repository.OrganizationReporsitory;
+import com.jobizzz.ctrledu.repository.OrganizationRepository;
 import com.jobizzz.ctrledu.repository.UserRepository;
 import com.jobizzz.ctrledu.response.LoginResponse;
 import com.jobizzz.ctrledu.response.ResponseDTO;
@@ -15,18 +14,14 @@ import io.jsonwebtoken.Jwts;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -38,7 +33,7 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private OrganizationReporsitory organizationReporsitory;
+    private OrganizationRepository organizationRepository;
 
     @Autowired
     private KeycloakService keycloakService;
@@ -197,7 +192,7 @@ public class AuthService {
 
             OrganizationEntity organizationEntity = new OrganizationEntity();
             organizationEntity.setOrgName(registerRequest.getOrganizationName());
-            organizationEntity = organizationReporsitory.save(organizationEntity);
+            organizationEntity = organizationRepository.save(organizationEntity);
 
             UserEntity userEntity = new UserEntity();
             userEntity.setOrgId(organizationEntity);
@@ -214,7 +209,7 @@ public class AuthService {
             signupResponse.setUserLastName(userEntity.getUserLastName());
             // Update organization's super-admin ID
             organizationEntity.setSuperAdminId(userEntity.getUserId());
-            organizationReporsitory.save(organizationEntity);
+            organizationRepository.save(organizationEntity);
         }catch (Exception e){
             System.err.println("Exception while adding records to user and organization table, Exception : " + e);
         }

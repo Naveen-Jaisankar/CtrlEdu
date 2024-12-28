@@ -1,32 +1,20 @@
 package com.jobizzz.ctrledu.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobizzz.ctrledu.dto.LoginRequest;
 import com.jobizzz.ctrledu.dto.RegisterRequest;
 import com.jobizzz.ctrledu.dto.VerifyCodeRequest;
 import com.jobizzz.ctrledu.entity.UserEntity;
-import com.jobizzz.ctrledu.repository.OrganizationReporsitory;
+import com.jobizzz.ctrledu.repository.OrganizationRepository;
 import com.jobizzz.ctrledu.repository.UserRepository;
 import com.jobizzz.ctrledu.response.ResponseDTO;
 import com.jobizzz.ctrledu.service.AuthService;
 import com.jobizzz.ctrledu.service.KeycloakService;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,7 +23,7 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private OrganizationReporsitory organizationReporsitory;
+    private OrganizationRepository organizationRepository;
 
     @Autowired
     private KeycloakService keycloakService;
