@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jobizzz</groupId>
-	<artifactId>ctrledu.notification</artifactId>
+	<artifactId>NotificationService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>NotificationService</name>
 	<description>Notification Service</description>
