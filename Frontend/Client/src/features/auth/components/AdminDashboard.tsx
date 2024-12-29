@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
+import Logout from "./Logout"; 
+
 import { useNavigate } from "react-router-dom";
 import {
   FiUsers,
@@ -169,6 +171,9 @@ const AdminDashboard: React.FC = () => {
             <FiCreditCard />
             Payments
           </button>
+          <div className="mt-auto">
+          <Logout />
+        </div>
         </div>
       </div>
 
