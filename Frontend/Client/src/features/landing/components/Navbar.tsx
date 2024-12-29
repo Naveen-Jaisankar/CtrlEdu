@@ -3,6 +3,7 @@ import { useState } from "react";
 import logo from "../../../assets/logo1.svg";
 import { navItems } from "../../../constants";
 import { Link } from "react-scroll";
+import { useNavigate } from "react-router-dom";
 
 type NavItem = {
   href: string;
@@ -10,6 +11,7 @@ type NavItem = {
 };
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
 
   const toggleNavbar = () => {
@@ -41,13 +43,13 @@ const Navbar: React.FC = () => {
           </ul>
           <div className="hidden lg:flex justify-center space-x-6 items-center">
             <a
-              href="#"
+              onClick={() => navigate("/login")}
               className="py-2 px-3 border rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
             >
               Sign In
             </a>
             <a
-              href="#"
+              onClick={() => navigate("/register")}
               className="bg-gradient-to-r from-orange-500 to-orange-800 py-2 px-3 rounded-md text-white"
             >
               Create an account
