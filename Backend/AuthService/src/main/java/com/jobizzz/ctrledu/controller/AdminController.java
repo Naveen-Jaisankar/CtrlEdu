@@ -109,4 +109,47 @@ public class AdminController {
         return ResponseEntity.ok(userInfo);
     }
 
+    @DeleteMapping("/delete-user/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalStateException("User not found with ID: " + userId));
+
+            // Delete from Keycloak
+            keycloakService.deleteKeycloakUser(user.getUserEmail());
+
+            // Delete from database
+            userRepository.delete(user);
+
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user");
+        }
+    }
+
+    @PutMapping("/edit-user/{userId}")
+    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody AddUserRequest request) {
+        try {
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalStateException("User not found with ID: " + userId));
+
+            // Save the old email before updating
+            String oldEmail = user.getUserEmail();
+
+            // Update in Keycloak first
+            keycloakService.updateKeycloakUser(oldEmail, request);
+
+            // Update fields in the database
+            user.setUserFirstName(request.getFirstName());
+            user.setUserLastName(request.getLastName());
+            user.setUserEmail(request.getEmail());
+            user.setUserRole(request.getRole());
+            userRepository.saveAndFlush(user);
+
+            return ResponseEntity.ok("User updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user");
+        }
+    }
+
 }

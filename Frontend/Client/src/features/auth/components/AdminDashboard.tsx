@@ -18,12 +18,67 @@ const AdminDashboard: React.FC = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("teacher");
+  const [editingUser, setEditingUser] = useState(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleEditClick = (user) => {
+    setEditingUser(user); // Set the user to edit
+    setFirstName(user.userFirstName);
+    setLastName(user.userLastName);
+    setEmail(user.userEmail);
+    setRole(user.userRole);
+    setIsModalOpen(true); // Open the modal with pre-filled data
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await axios.delete(
+        `http://localhost:8081/api/admin/delete-user/${userId}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
+      );
+      setSuccess("User deleted successfully!");
+      fetchUsers(); // Refresh the user list
+    } catch (error) {
+      setError("Failed to delete user");
+    }
+  };
+
+  const handleAddOrEditUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      if (editingUser) {
+        // Update user
+        await axios.put(
+          `http://localhost:8081/api/admin/edit-user/${editingUser.userId}`,
+          { firstName, lastName, email, role },
+          { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
+        );
+        setSuccess("User updated successfully!");
+      } else {
+        // Add user
+        const response = await axios.post(
+          "http://localhost:8081/api/admin/add-user",
+          { firstName, lastName, email, role },
+          { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
+        );
+        setSuccess(`User added successfully! Unique Code: ${response.data.uniqueCode}`);
+      }
+  
+      setIsModalOpen(false);
+      fetchUsers(); // Refresh the user list
+    } catch (error) {
+      setError(editingUser ? "Failed to update user" : "Failed to add user");
+    } finally {
+      setEditingUser(null); // Reset editing state
+    }
+  };
+  
 
   const fetchUsers = async () => {
     try {
@@ -40,21 +95,35 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleAddUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/api/admin/add-user",
-        { firstName, lastName, email, role },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
-      );
-      setSuccess(`User added successfully! Unique Code: ${response.data.uniqueCode}`);
-      setIsModalOpen(false);
-      fetchUsers();
-    } catch (error) {
-      setError("Failed to add user");
-    }
+  // const handleAddUser = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8081/api/admin/add-user",
+  //       { firstName, lastName, email, role },
+  //       { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
+  //     );
+  //     setSuccess(`User added successfully! Unique Code: ${response.data.uniqueCode}`);
+  //     setIsModalOpen(false);
+  //     fetchUsers();
+  //   } catch (error) {
+  //     setError("Failed to add user");
+  //   }
+  // };
+
+  const resetForm = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setRole("teacher");
+    setEditingUser(null);
   };
+  
+  const handleCloseModal = () => {
+    resetForm();
+    setIsModalOpen(false);
+  };
+
 
   return (
     <div className="flex h-screen bg-neutral-900 text-white">
@@ -138,6 +207,20 @@ const AdminDashboard: React.FC = () => {
                   <td className="py-4 px-6">{`${user.userFirstName} ${user.userLastName}`}</td>
                   <td className="py-4 px-6">{user.userEmail}</td>
                   <td className="py-4 px-6">{user.userRole}</td>
+                  <td className="py-4 px-6 flex gap-2">
+                    <button
+                      onClick={() => handleEditClick(user)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(user.userId)}
+                      className="bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded"
+                    >
+                      Delete
+                    </button>
+                </td>
                 </tr>
               ))}
             </tbody>
@@ -148,12 +231,12 @@ const AdminDashboard: React.FC = () => {
       {/* Add User Modal */}
       <Modal
         isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
+        onRequestClose={handleCloseModal}
         className="bg-neutral-800 w-1/3 mx-auto mt-20 p-6 rounded shadow-lg text-white"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-xl font-bold mb-4">Add User</h2>
-        <form onSubmit={handleAddUser}>
+        <h2 className="text-xl font-bold mb-4">{editingUser ? "Edit User" : "Add User"}</h2>
+        <form onSubmit={handleAddOrEditUser}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">First Name</label>
             <input

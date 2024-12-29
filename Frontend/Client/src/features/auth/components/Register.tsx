@@ -23,9 +23,9 @@ const Register: React.FC = () => {
             if (role === 'organization') {
                 // Organization registration
                 await axios.post('http://localhost:8081/api/auth/register', {
-                    organizationName,
-                    firstName,
-                    lastName,
+                    organization_name: organizationName,
+                    first_name: firstName,
+                    last_name: lastName,
                     email,
                     password,
                 });
