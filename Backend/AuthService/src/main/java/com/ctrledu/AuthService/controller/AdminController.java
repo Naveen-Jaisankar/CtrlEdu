@@ -14,20 +14,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-
-
+import com.ctrledu.CommonService.utilities.ServiceCommunicator;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
 
 
+    private final ServiceCommunicator serviceCommunicator;
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private KeycloakService keycloakService;
+
+    public AdminController() {
+        serviceCommunicator = null;
+    }
 
     @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody AddUserRequest request) {
