@@ -29,9 +29,10 @@ public class AdminController {
     @Autowired
     private KeycloakService keycloakService;
 
-    public AdminController() {
-        serviceCommunicator = null;
+    public AdminController(ServiceCommunicator serviceCommunicator) {
+        this.serviceCommunicator = serviceCommunicator;
     }
+
 
     @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody AddUserRequest request) {
@@ -44,6 +45,18 @@ public class AdminController {
             //TODO Instead of generating a unique code, encrypt userid-timestamp-orgid
             // Generate unique code
             String uniqueCode = UUID.randomUUID().toString();
+
+            serviceCommunicator.sendPostRequest(
+                    "http://NotificationService", // Use http://, not lb://
+                    "/api/notify/email/send",
+                    "naveen.jaisankar1999@gmail.com",
+                    String.class
+            ).subscribe(response -> {
+                System.out.println("Notification Sent: " + response);
+            }, error -> {
+                System.err.println("Error Sending Notification: " + error.getMessage());
+            });
+
 
             // Save user in the database
             UserEntity user = new UserEntity();

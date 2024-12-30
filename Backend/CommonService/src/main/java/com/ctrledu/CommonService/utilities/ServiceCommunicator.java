@@ -1,5 +1,6 @@
 package com.ctrledu.CommonService.utilities;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -12,11 +13,13 @@ public class ServiceCommunicator {
 
     private final WebClient webClient;
 
-    public ServiceCommunicator(WebClient.Builder builder) {
+    public ServiceCommunicator(@LoadBalanced WebClient.Builder builder) {
         this.webClient = builder.build();
     }
 
     public <T> Mono<T> sendPostRequest(String baseUrl, String uri, Object requestBody, Class<T> responseType) {
+        System.out.println("Sending POST request to: " + baseUrl + uri);
+        System.out.println("Payload: " + requestBody);
         return webClient.post()
                 .uri(baseUrl + uri)
                 .bodyValue(requestBody)

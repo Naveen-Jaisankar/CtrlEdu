@@ -1,10 +1,10 @@
-package com.ctrledu.AuthService;
+package com.ctrledu.EurekaService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AuthServiceApplicationTests {
+class EurekaServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

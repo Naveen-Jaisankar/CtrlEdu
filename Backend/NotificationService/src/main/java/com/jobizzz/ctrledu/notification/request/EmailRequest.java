@@ -8,6 +8,9 @@ public class EmailRequest implements Serializable {
     private String subject;
     private String body;
 
+    public EmailRequest() {
+    }
+
     public EmailRequest(String to, String subject, String body) {
         this.to = to;
         this.subject = subject;

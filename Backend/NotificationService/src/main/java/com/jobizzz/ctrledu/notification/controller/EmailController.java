@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notification/email")
+@RequestMapping("/api/notify/email")
 public class EmailController {
 
     @Autowired
@@ -15,6 +15,7 @@ public class EmailController {
 
     @PostMapping("/send")
     public String sendEmails(@RequestBody String recipients){
+        System.out.println("Send Emails triggered");
         String subject = "Test Subject";
         String messageBody = "<h1>Test Email</h1><p>This is a test email.</p>";
 //        for (String recipient : recipients) {

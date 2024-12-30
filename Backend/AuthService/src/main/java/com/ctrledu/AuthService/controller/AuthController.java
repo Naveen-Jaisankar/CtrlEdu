@@ -71,7 +71,7 @@ public class AuthController {
         try {
             // Step 1: Validate the unique code
             Optional<UserEntity> userOptional = userRepository.findByUniqueCode(request.getCode());
-            if (userOptional.isEmpty()) {
+            if (userOptional.isPresent()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
             }
 
