@@ -131,3 +131,4 @@ Backend/ChatService/target/test-classes/com/ctrledu/ChatService/ChatServiceAppli
 Backend/ChatService/.idea/workspace.xml
 Backend/.DS_Store
 .DS_Store
+Backend/ChatService/target/classes/com/ctrledu/ChatService/config/CorsConfig.class
