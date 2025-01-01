@@ -146,3 +146,4 @@ Backend/MasterService/.gitattributes
 Backend/MasterService/compose.yaml
 Backend/MasterService/mvnw
 Backend/MasterService/mvnw.cmd
+Backend/ChatService/target/classes/com/ctrledu/ChatService/config/CorsConfig.class
