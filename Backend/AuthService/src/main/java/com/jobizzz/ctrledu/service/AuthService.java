@@ -2,6 +2,7 @@ package com.jobizzz.ctrledu.service;
 
 import com.jobizzz.ctrledu.dto.LoginRequest;
 import com.jobizzz.ctrledu.dto.RegisterRequest;
+import com.jobizzz.ctrledu.dto.VerifyCodeRequest;
 import com.jobizzz.ctrledu.entity.OrganizationEntity;
 import com.jobizzz.ctrledu.entity.UserEntity;
 import com.jobizzz.ctrledu.repository.OrganizationRepository;
@@ -214,6 +215,27 @@ public class AuthService {
             System.err.println("Exception while adding records to user and organization table, Exception : " + e);
         }
         return signupResponse;
+    }
+    public String verifyCode(VerifyCodeRequest request) throws Exception {
+        // Step 1: Validate the unique code
+        Optional<UserEntity> userOptional = userRepository.findByUniqueCode(request.getCode());
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("Invalid code");
+        }
+
+        UserEntity user = userOptional.get();
+
+        // Step 2: Update the Keycloak password if email and password are provided
+        if (request.getEmail() != null && request.getPassword() != null) {
+            user.setUserEmail(request.getEmail());
+            userRepository.save(user); // Update email in DB
+
+            keycloakService.updateKeycloakPassword(request.getEmail(), request.getPassword());
+            return "Password successfully set";
+        }
+
+        // Step 3: Return success if the unique code is valid (without email/password)
+        return "Code validated. Please set your email and password.";
     }
 
 

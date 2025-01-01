@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface OrganizationRepository extends JpaRepository<OrganizationEntity,Long> {
 
     Optional<OrganizationEntity> findByOrgId(Long orgId);
+
 }

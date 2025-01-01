@@ -1,12 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Login from "./features/auth/components/Login";
 import Register from "./features/auth/components/Register";
-import AdminDashboard from "./features/auth/components/AdminDashboard";
+import AdminLayout from "./features/auth/components/AdminLayout";
 import TeacherDashboard from "./features/auth/components/TeacherDashboard";
 import StudentDashboard from "./features/auth/components/StudentDashboard";
 import FirstLogin from "./features/auth/components/FirstLogin";
 import LandingPage from "./features/landing/pages/LandingPage";
+import ClassTab from "./features/auth/components/ClassTab";
+import PeopleTab from "./features/auth/components/PeopleTab";
+import ModuleTab from "./features/auth/components/ModuleTab";
 
 const App: React.FC = () => {
     // Helper function to check if the user is authenticated
@@ -20,41 +25,49 @@ const App: React.FC = () => {
     };
 
     // Protected Route Component
-    const ProtectedRoute: React.FC<{ children: React.ReactElement; role: string }> = ({ children, role }) => {
+    const ProtectedRoute: React.FC<{
+        children: React.ReactElement;
+        roles?: string[];
+      }> = ({ children, roles }) => {
         if (!isAuthenticated()) {
-            return <Navigate to="/login" replace />; // Redirect to login if not authenticated
+          return <Navigate to="/login" replace />;
         }
-
-        const userRole = getUserRole();
-        if (userRole !== role) {
-            return <Navigate to="/" replace />; // Redirect to landing page if the role doesn't match
+    
+        if (roles && !roles.includes(getUserRole() || "")) {
+          return <Navigate to="/" replace />;
         }
-
+    
         return children;
-    };
+      };
 
     return (
         <Router>
+            <ToastContainer position="top-right" autoClose={3000} />
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/first-login" element={<FirstLogin />} />
+              
 
                 {/* Protected Routes */}
                 <Route
-                    path="/admin-dashboard"
+                    path="/admin"
                     element={
-                        <ProtectedRoute role="super-admin">
-                            <AdminDashboard />
+                        <ProtectedRoute roles={["super-admin"]}>
+                            <AdminLayout />
                         </ProtectedRoute>
                     }
-                />
+                >
+                    <Route path="people-tab" element={<PeopleTab />} />
+                    <Route path="class-tab" element={<ClassTab />} />
+                    <Route path="Module-tab" element={<ModuleTab/>} />
+                </Route>
                 <Route
                     path="/teacher-dashboard"
                     element={
-                        <ProtectedRoute role="teacher">
+                        <ProtectedRoute roles={["teacher"]}>
                             <TeacherDashboard />
                         </ProtectedRoute>
                     }
@@ -62,7 +75,7 @@ const App: React.FC = () => {
                 <Route
                     path="/student-dashboard"
                     element={
-                        <ProtectedRoute role="student">
+                        <ProtectedRoute roles={["student"]}>
                             <StudentDashboard />
                         </ProtectedRoute>
                     }

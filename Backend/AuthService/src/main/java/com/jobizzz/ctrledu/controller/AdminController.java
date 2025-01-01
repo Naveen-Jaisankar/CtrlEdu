@@ -35,39 +35,11 @@ public class AdminController {
 
     @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody AddUserRequest request) {
-        // Check for duplicate email
-        if (userRepository.findByUserEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-        }
-
         try {
-            String email = ThreadContext.getEmail();
-
-            Long orgId = adminService.getAdminOrgId(email);
-
-            OrganizationEntity organization = organizationRepository.findById(orgId)
-                    .orElseThrow(() -> new IllegalStateException("Organization not found for ID: " + orgId));
-
-
-            //TODO Instead of generating a unique code, encrypt userid-timestamp-orgid
-            // Generate unique code
-            String uniqueCode = UUID.randomUUID().toString();
-
-            // Save user in the database
-            UserEntity user = new UserEntity();
-            user.setUserFirstName(request.getFirstName());
-            user.setUserLastName(request.getLastName());
-            user.setUserEmail(request.getEmail());
-            user.setUserRole(request.getRole());
-            user.setUniqueCode(uniqueCode);
-            user.setOrgId(organization);
-            userRepository.saveAndFlush(user);
-
-
-            // Create user in Keycloak
-            keycloakService.createKeycloakUser(request, uniqueCode);
-
-            return ResponseEntity.ok(Collections.singletonMap("uniqueCode", uniqueCode));
+            Map<String, String> response = adminService.addUser(request);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add user");
         }
@@ -76,51 +48,19 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
         try {
-
-            String email = ThreadContext.getEmail();
-
-            if (email == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No email found in context");
-            }
-            // Fetch all users belonging to the same organization
-            Long orgId = adminService.getAdminOrgId(email);
-
-            List<UserEntity> users = userRepository.findByOrgIdExcludingSuperAdmin(orgId);
-
-            // Fetch all users from the database
+            List<UserEntity> users = adminService.getUsers();
             return ResponseEntity.ok(users);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch users");
         }
-    }
-    @GetMapping("/user-info")
-    public ResponseEntity<?> getUserInfo() {
-        // Extract user information from SecurityContext or JWT
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        String role = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities()
-                .iterator()
-                .next()
-                .getAuthority();
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("email", email);
-        userInfo.put("role", role);
-        return ResponseEntity.ok(userInfo);
     }
 
     @DeleteMapping("/delete-user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
         try {
-            UserEntity user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalStateException("User not found with ID: " + userId));
-
-            // Delete from Keycloak
-            keycloakService.deleteKeycloakUser(user.getUserEmail());
-
-            // Delete from database
-            userRepository.delete(user);
-
+            adminService.deleteUser(userId);
             return ResponseEntity.ok("User deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user");
@@ -130,22 +70,7 @@ public class AdminController {
     @PutMapping("/edit-user/{userId}")
     public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody AddUserRequest request) {
         try {
-            UserEntity user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalStateException("User not found with ID: " + userId));
-
-            // Save the old email before updating
-            String oldEmail = user.getUserEmail();
-
-            // Update in Keycloak first
-            keycloakService.updateKeycloakUser(oldEmail, request);
-
-            // Update fields in the database
-            user.setUserFirstName(request.getFirstName());
-            user.setUserLastName(request.getLastName());
-            user.setUserEmail(request.getEmail());
-            user.setUserRole(request.getRole());
-            userRepository.saveAndFlush(user);
-
+            adminService.editUser(userId, request);
             return ResponseEntity.ok("User updated successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user");

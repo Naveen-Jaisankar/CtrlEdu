@@ -69,32 +69,19 @@ public class AuthController {
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCode(@RequestBody VerifyCodeRequest request) {
         try {
-            // Step 1: Validate the unique code
-            Optional<UserEntity> userOptional = userRepository.findByUniqueCode(request.getCode());
-            if (userOptional.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
-            }
-
-            UserEntity user = userOptional.get();
-
-            // Step 2: Update the Keycloak password if email and password are provided
-            if (request.getEmail() != null && request.getPassword() != null) {
-                user.setUserEmail(request.getEmail());
-                userRepository.save(user); // Update email in DB
-
-                keycloakService.updateKeycloakPassword(request.getEmail(), request.getPassword());
-                return ResponseEntity.ok("Password successfully set");
-            }
-
-            // Step 3: Return success if the unique code is valid (without email/password)
-            return ResponseEntity.ok(Collections.singletonMap("message", "Code validated. Please set your email and password."));
+            String response = authService.verifyCode(request);
+            return ResponseEntity.ok(Collections.singletonMap("message", response));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to verify code");
         }
     }
 
-
-
 }
+
+
+
+
 
 

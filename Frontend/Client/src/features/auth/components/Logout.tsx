@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Logout: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Logout: React.FC = () => {
     }
   
     try {
+      toast.info("Logging out...");
       const keycloakLogoutUrl = `http://localhost:8080/realms/CtrlEdu/protocol/openid-connect/logout`;
       await axios.get(keycloakLogoutUrl, {
         headers: {

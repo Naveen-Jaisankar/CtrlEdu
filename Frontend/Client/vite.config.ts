@@ -14,7 +14,10 @@ export default defineConfig({
       usePolling: true,
     },
     fs: {
-      allow: ["./src"],
+      allow: [
+        './', // Allow the project root directory
+        'node_modules' // Allow access to node_modules
+      ],
     },
   },
 });
