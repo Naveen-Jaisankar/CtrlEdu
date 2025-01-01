@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
-
 const ChatWindow: React.FC = () => {
   const [messages, setMessages] = useState([
     { sender: "Mas Happy", content: "Hey, how are you?", time: "5:00 PM" },
