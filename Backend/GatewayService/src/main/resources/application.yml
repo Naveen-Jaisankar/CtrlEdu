@@ -1,0 +1,36 @@
+server:
+  port: 8084
+
+
+spring:
+  application:
+    name: GatewayService
+  cloud:
+    gateway:
+      routes:
+        - id: AuthService-Auth
+          uri: lb://AuthService
+          predicates:
+            - Path=/api/auth/**
+        - id: AuthService-Admin
+          uri: lb://AuthService
+          predicates:
+            - Path=/api/admin/**
+        - id: NotificationService
+          uri: lb://NotificationService
+          predicates:
+            - Path=/api/notify/**
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+eureka:
+  instance:
+    hostname: localhost # or the IP address of the machine
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # Replace with your Eureka server URL
+
