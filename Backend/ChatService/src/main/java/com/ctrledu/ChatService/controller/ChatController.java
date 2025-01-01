@@ -43,6 +43,7 @@ public class ChatController {
 
     @GetMapping(value = "/api/message", produces = "application/json")
     public Map<String, Object> getMessages(@RequestParam int offset, @RequestParam String topic ) {
+        System.out.println("Received Request - Topic: " + topic + ", Offset: " + offset);
         System.out.println("Topic Id: "+ topic);
         ArrayList<Message> messages = new ArrayList<Message>();
         int lastSeqNum = 0;

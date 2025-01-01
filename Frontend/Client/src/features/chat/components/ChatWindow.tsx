@@ -1,29 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
-const ChatWindow: React.FC = () => {
-  const [messages, setMessages] = useState([
-    { sender: "Mas Happy", content: "Hey, how are you?", time: "5:00 PM" },
-    { sender: "You", content: "I'm good, thanks!", time: "5:02 PM" },
-    { sender: "Mas Happy", content: "Glad to hear!", time: "5:05 PM" },
-  ]);
+import useWebSocket from "../hooks/useWebSocket";
+import { sendMessage, getMessages } from "../services/chatService";
+import { Message } from "../types/Message";
 
-  const handleSendMessage = (newMessage: string) => {
-    if (newMessage.trim() !== "") {
+const ChatWindow: React.FC<{ topic: string }> = ({ topic }) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const formatTime = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  // Handle new messages received via WebSocket
+  const handleWebSocketMessage = useCallback((newMessage: Message) => {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { ...newMessage, time: formatTime(newMessage.timestamp) },
+    ]);
+  }, []);
+
+  // Initialize WebSocket
+  const { sendMessage: sendWebSocketMessage } = useWebSocket<Message>(
+    `ws://localhost:8080/ws-chat`,
+    handleWebSocketMessage
+  );
+
+  // Fetch previous messages when component mounts
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const fetchedMessages = await getMessages(topic);
+
+        // Add the `time` property to each message
+        const formattedMessages = fetchedMessages.map((msg) => ({
+          ...msg,
+          time: formatTime(msg.timestamp),
+        }));
+
+        setMessages(formattedMessages);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchMessages();
+  }, [topic]);
+
+  // Handle message send
+  const handleSendMessage = async (content: string) => {
+    const message: Message = {
+      sender: "You",
+      content,
+      topic,
+      timestamp: Date.now(),
+    };
+
+    try {
+      // Send message to the backend (via REST API)
+      await sendMessage(message);
+
+      // Send message via WebSocket
+      sendWebSocketMessage(message);
+
+      // Add the message locally for instant feedback
       setMessages((prevMessages) => [
         ...prevMessages,
-        {
-          sender: "You",
-          content: newMessage,
-          time: new Date().toLocaleTimeString(),
-        },
+        { ...message, time: formatTime(message.timestamp) },
       ]);
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col flex-grow bg-gray-50 dark:bg-gray-900 h-full">
       <ChatHeader />
       <MessageList messages={messages} />
       <ChatInput onSendMessage={handleSendMessage} />

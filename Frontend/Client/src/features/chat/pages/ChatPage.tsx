@@ -1,17 +1,20 @@
-import ChatList from "../components/ChatList";
+import React, { useState } from "react";
 import ChatWindow from "../components/ChatWindow";
+import ChatList from "../components/ChatList";
 
 const ChatPage: React.FC = () => {
+  const [selectedTopic, setSelectedTopic] = useState<string>("odama"); // Default topic
+
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
       {/* Chat List */}
-      <div className="w-1/4 bg-gray-200 border-r border-gray-300 dark:bg-gray-800 dark:border-gray-700">
-        <ChatList />
+      <div className="w-1/4">
+        <ChatList onSelectTopic={setSelectedTopic} />
       </div>
 
       {/* Chat Window */}
-      <div className="flex-grow bg-gray-50 dark:bg-gray-900">
-        <ChatWindow />
+      <div className="flex-grow">
+        <ChatWindow topic={selectedTopic} />
       </div>
     </div>
   );
