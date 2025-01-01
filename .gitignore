@@ -131,3 +131,13 @@ Backend/ChatService/target/test-classes/com/ctrledu/ChatService/ChatServiceAppli
 Backend/ChatService/.idea/workspace.xml
 Backend/.DS_Store
 .DS_Store
+Backend/.idea/compiler.xml
+Backend/.idea/encodings.xml
+Backend/.idea/jarRepositories.xml
+Backend/GatewayService/.mvn/wrapper/maven-wrapper.properties
+Backend/GatewayService/mvnw.cmd
+Backend/GatewayService/mvnw
+Backend/EurekaService/.mvn/wrapper/maven-wrapper.properties
+Backend/EurekaService/.gitattributes
+Backend/EurekaService/mvnw
+Backend/EurekaService/mvnw.cmd
