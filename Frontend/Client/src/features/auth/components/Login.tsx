@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from "react-toastify";
 import axios from 'axios';
 
 const Login: React.FC = () => {
@@ -14,7 +15,7 @@ const Login: React.FC = () => {
 
         try {
             // Call the backend login API
-            const response = await axios.post('http://localhost:8081/api/auth/login', {
+            const response = await axios.post('http://localhost:8084/api/auth/login', {
                 email,
                 password,
             });
@@ -32,7 +33,7 @@ const Login: React.FC = () => {
 
             // Navigate to the appropriate dashboard based on the role
             if (role === 'super-admin') {
-                navigate('/admin-dashboard');
+                navigate('/admin');
             } else if (role === 'teacher') {
                 navigate('/teacher-dashboard');
             } else if (role === 'student') {
@@ -40,6 +41,7 @@ const Login: React.FC = () => {
             } else {
                 setError('Invalid role. Please contact support.');
             }
+            toast.success("Logged in successfully!");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 // Handle error from backend

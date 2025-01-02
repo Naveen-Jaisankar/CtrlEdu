@@ -1,6 +1,6 @@
-package com.jobizzz.ctrledu.notification.service;
+package com.ctrledu.NotificationService.service;
 
-import com.jobizzz.ctrledu.notification.request.EmailRequest;
+import com.ctrledu.NotificationService.request.EmailRequest;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

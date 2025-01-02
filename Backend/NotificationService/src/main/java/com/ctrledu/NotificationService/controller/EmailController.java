@@ -1,10 +1,8 @@
-package com.jobizzz.ctrledu.notification.controller;
+package com.ctrledu.NotificationService.controller;
 
-import com.jobizzz.ctrledu.notification.service.EmailQueueService;
+import com.ctrledu.NotificationService.service.EmailQueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/notify/email")
