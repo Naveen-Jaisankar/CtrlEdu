@@ -1,77 +1,59 @@
 package com.ctrledu.AuthService.controller;
 
 import com.ctrledu.AuthService.dto.AddUserRequest;
+import com.ctrledu.AuthService.dto.ThreadContext;
+import com.ctrledu.AuthService.entity.OrganizationEntity;
 import com.ctrledu.AuthService.entity.UserEntity;
+import com.ctrledu.AuthService.repository.OrganizationRepository;
 import com.ctrledu.AuthService.repository.UserRepository;
+import com.ctrledu.AuthService.service.AdminService;
 import com.ctrledu.AuthService.service.KeycloakService;
+import com.ctrledu.CommonService.utilities.ServiceCommunicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import com.ctrledu.CommonService.utilities.ServiceCommunicator;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
 
-
-    private final ServiceCommunicator serviceCommunicator;
-
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
+    private ServiceCommunicator serviceCommunicator;
+
+    @Autowired
     private KeycloakService keycloakService;
 
-    public AdminController(ServiceCommunicator serviceCommunicator) {
-        this.serviceCommunicator = serviceCommunicator;
-    }
+    @Autowired
+    private AdminService adminService;
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
     @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody AddUserRequest request) {
-        // Check for duplicate email
-        if (userRepository.findByUserEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-        }
-
         try {
-            //TODO Instead of generating a unique code, encrypt userid-timestamp-orgid
-            // Generate unique code
-            String uniqueCode = UUID.randomUUID().toString();
+            Map<String, String> response = adminService.addUser(request);
 
             serviceCommunicator.sendPostRequest(
                     "http://NotificationService", // Use http://, not lb://
                     "/api/notify/email/send",
-                    "naveen.jaisankar1999@gmail.com",
+                    request.getEmail(),
                     String.class
-            ).subscribe(response -> {
-                System.out.println("Notification Sent: " + response);
+            ).subscribe(res -> {
+                System.out.println("Notification Sent: " + res);
             }, error -> {
                 System.err.println("Error Sending Notification: " + error.getMessage());
             });
 
-
-            // Save user in the database
-            UserEntity user = new UserEntity();
-            user.setUserFirstName(request.getFirstName());
-            user.setUserLastName(request.getLastName());
-            user.setUserEmail(request.getEmail());
-            user.setUserRole(request.getRole());
-            user.setUniqueCode(uniqueCode);
-            userRepository.saveAndFlush(user);
-
-
-            // Create user in Keycloak
-            keycloakService.createKeycloakUser(request, uniqueCode);
-
-            return ResponseEntity.ok(Collections.singletonMap("uniqueCode", uniqueCode));
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add user");
         }
@@ -80,26 +62,33 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
         try {
-            // Fetch all users from the database
-            return ResponseEntity.ok(userRepository.findAll());
+            List<UserEntity> users = adminService.getUsers();
+            return ResponseEntity.ok(users);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch users");
         }
     }
-    @GetMapping("/user-info")
-    public ResponseEntity<?> getUserInfo() {
-        // Extract user information from SecurityContext or JWT
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        String role = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities()
-                .iterator()
-                .next()
-                .getAuthority();
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("email", email);
-        userInfo.put("role", role);
-        return ResponseEntity.ok(userInfo);
+
+    @DeleteMapping("/delete-user/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            adminService.deleteUser(userId);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user");
+        }
+    }
+
+    @PutMapping("/edit-user/{userId}")
+    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody AddUserRequest request) {
+        try {
+            adminService.editUser(userId, request);
+            return ResponseEntity.ok("User updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user");
+        }
     }
 
 }

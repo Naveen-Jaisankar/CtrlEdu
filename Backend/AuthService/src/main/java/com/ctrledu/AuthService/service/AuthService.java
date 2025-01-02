@@ -1,9 +1,11 @@
 package com.ctrledu.AuthService.service;
 
+
 import com.ctrledu.AuthService.dto.LoginRequest;
 import com.ctrledu.AuthService.dto.RegisterRequest;
+import com.ctrledu.AuthService.dto.VerifyCodeRequest;
 import com.ctrledu.AuthService.entity.OrganizationEntity;
-import com.ctrledu.AuthService.repository.OrganizationReporsitory;
+import com.ctrledu.AuthService.repository.OrganizationRepository;
 import com.ctrledu.AuthService.response.LoginResponse;
 import com.ctrledu.AuthService.entity.UserEntity;
 import com.ctrledu.AuthService.repository.UserRepository;
@@ -33,7 +35,7 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private OrganizationReporsitory organizationReporsitory;
+    private OrganizationRepository organizationRepository;
 
     @Autowired
     private KeycloakService keycloakService;
@@ -192,7 +194,7 @@ public class AuthService {
 
             OrganizationEntity organizationEntity = new OrganizationEntity();
             organizationEntity.setOrgName(registerRequest.getOrganizationName());
-            organizationEntity = organizationReporsitory.save(organizationEntity);
+            organizationEntity = organizationRepository.save(organizationEntity);
 
             UserEntity userEntity = new UserEntity();
             userEntity.setOrgId(organizationEntity);
@@ -209,11 +211,32 @@ public class AuthService {
             signupResponse.setUserLastName(userEntity.getUserLastName());
             // Update organization's super-admin ID
             organizationEntity.setSuperAdminId(userEntity.getUserId());
-            organizationReporsitory.save(organizationEntity);
+            organizationRepository.save(organizationEntity);
         }catch (Exception e){
             System.err.println("Exception while adding records to user and organization table, Exception : " + e);
         }
         return signupResponse;
+    }
+    public String verifyCode(VerifyCodeRequest request) throws Exception {
+        // Step 1: Validate the unique code
+        Optional<UserEntity> userOptional = userRepository.findByUniqueCode(request.getCode());
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("Invalid code");
+        }
+
+        UserEntity user = userOptional.get();
+
+        // Step 2: Update the Keycloak password if email and password are provided
+        if (request.getEmail() != null && request.getPassword() != null) {
+            user.setUserEmail(request.getEmail());
+            userRepository.save(user); // Update email in DB
+
+            keycloakService.updateKeycloakPassword(request.getEmail(), request.getPassword());
+            return "Password successfully set";
+        }
+
+        // Step 3: Return success if the unique code is valid (without email/password)
+        return "Code validated. Please set your email and password.";
     }
 
 

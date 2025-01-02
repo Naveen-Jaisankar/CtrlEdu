@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "react-toastify": "^11.0.2",
     "styled-jsx": "^5.1.6"
   },
   "devDependencies": {

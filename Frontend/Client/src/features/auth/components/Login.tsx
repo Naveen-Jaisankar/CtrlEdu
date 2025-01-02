@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 const Login: React.FC = () => {
@@ -12,15 +13,12 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError(null);
 
-    try {
-      // Call the backend login API
-      const response = await axios.post(
-        "http://localhost:8084/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+        try {
+            // Call the backend login API
+            const response = await axios.post('http://localhost:8084/api/auth/login', {
+                email,
+                password,
+            });
 
       // Extract the access token, refresh token, and role
       const { accessToken, refreshToken, role } = response.data.data;
@@ -33,27 +31,26 @@ const Login: React.FC = () => {
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("role", role);
 
-      // Navigate to the appropriate dashboard based on the role
-      if (role === "super-admin") {
-        navigate("/admin-dashboard");
-      } else if (role === "teacher") {
-        navigate("/teacher-dashboard");
-      } else if (role === "student") {
-        navigate("/student-dashboard");
-      } else {
-        setError("Invalid role. Please contact support.");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        // Handle error from backend
-        setError(
-          error.response.data.message || "Login failed. Please try again."
-        );
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
-    }
-  };
+            // Navigate to the appropriate dashboard based on the role
+            if (role === 'super-admin') {
+                navigate('/admin');
+            } else if (role === 'teacher') {
+                navigate('/teacher-dashboard');
+            } else if (role === 'student') {
+                navigate('/student-dashboard');
+            } else {
+                setError('Invalid role. Please contact support.');
+            }
+            toast.success("Logged in successfully!");
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                // Handle error from backend
+                setError(error.response.data.message || 'Login failed. Please try again.');
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
+        }
+    };
 
   return (
     <div className="min-h-screen flex items-center justify-center dark:bg-neutral-900 bg-white">

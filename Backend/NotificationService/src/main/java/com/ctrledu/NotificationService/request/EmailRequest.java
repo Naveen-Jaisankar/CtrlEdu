@@ -1,4 +1,4 @@
-package com.jobizzz.ctrledu.notification.request;
+package com.ctrledu.NotificationService.request;
 
 import java.io.Serializable;
 

@@ -5,14 +5,19 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Login from "./features/auth/components/Login";
 import Register from "./features/auth/components/Register";
-import AdminDashboard from "./features/auth/components/AdminDashboard";
+import AdminLayout from "./features/auth/components/AdminLayout";
 import TeacherDashboard from "./features/auth/components/TeacherDashboard";
 import StudentDashboard from "./features/auth/components/StudentDashboard";
 import FirstLogin from "./features/auth/components/FirstLogin";
 import LandingPage from "./features/landing/pages/LandingPage";
 import ChatPage from "./features/chat/pages/ChatPage";
+import ClassTab from "./features/auth/components/ClassTab";
+import PeopleTab from "./features/auth/components/PeopleTab";
+import ModuleTab from "./features/auth/components/ModuleTab";
 
 const App: React.FC = () => {
   // Helper function to check if the user is authenticated
@@ -43,6 +48,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -53,13 +59,17 @@ const App: React.FC = () => {
 
         {/* Protected Routes */}
         <Route
-          path="/admin-dashboard"
+          path="/admin"
           element={
             <ProtectedRoute roles={["super-admin"]}>
-              <AdminDashboard />
+              <AdminLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="people-tab" element={<PeopleTab />} />
+          <Route path="class-tab" element={<ClassTab />} />
+          <Route path="Module-tab" element={<ModuleTab />} />
+        </Route>
         <Route
           path="/teacher-dashboard"
           element={
@@ -76,14 +86,6 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        {/* <Route
-          path="/chat"
-          element={
-            <ProtectedRoute roles={["teacher", "student"]}>
-              <ChatPage />
-            </ProtectedRoute>
-          }
-        /> */}
 
         {/* Catch-All Route for Undefined Paths */}
         <Route path="*" element={<Navigate to="/" replace />} />

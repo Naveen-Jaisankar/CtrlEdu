@@ -1,4 +1,4 @@
-package com.jobizzz.ctrledu.notification;
+package com.ctrledu.NotificationService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

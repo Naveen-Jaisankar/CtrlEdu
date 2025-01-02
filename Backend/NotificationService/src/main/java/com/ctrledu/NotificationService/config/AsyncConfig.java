@@ -1,4 +1,4 @@
-package com.jobizzz.ctrledu.notification.config;
+package com.ctrledu.NotificationService.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

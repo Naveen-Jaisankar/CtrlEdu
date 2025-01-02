@@ -1,4 +1,4 @@
-package com.jobizzz.ctrledu.notification.service;
+package com.ctrledu.NotificationService.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

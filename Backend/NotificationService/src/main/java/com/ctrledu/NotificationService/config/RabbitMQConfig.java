@@ -1,4 +1,4 @@
-package com.jobizzz.ctrledu.notification.config;
+package com.ctrledu.NotificationService.config;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -24,7 +24,7 @@ public class RabbitMQConfig {
     public MessageConverter jsonMessageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
         converter.setClassMapper(new DefaultClassMapper() {{
-            setTrustedPackages("com.jobizzz.ctrledu.notification.request");
+            setTrustedPackages("com.ctrledu.NotificationService.request");
         }});
         return converter;
     }

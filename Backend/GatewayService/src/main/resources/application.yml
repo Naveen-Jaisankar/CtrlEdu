@@ -24,6 +24,10 @@ spring:
           uri: lb://ChatService
           predicates:
             - Path=/api/message/**
+        - id: MasterService
+          uri: lb://MasterService
+          predicates:
+            - Path=/api/client/**
     discovery:
       locator:
         enabled: true
