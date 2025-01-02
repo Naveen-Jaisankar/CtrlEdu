@@ -20,6 +20,10 @@ spring:
           uri: lb://NotificationService
           predicates:
             - Path=/api/notify/**
+        - id: MasterService
+          uri: lb://MasterService
+          predicates:
+            - Path=/api/client/**
     discovery:
       locator:
         enabled: true

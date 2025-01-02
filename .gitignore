@@ -141,3 +141,8 @@ Backend/EurekaService/.mvn/wrapper/maven-wrapper.properties
 Backend/EurekaService/.gitattributes
 Backend/EurekaService/mvnw
 Backend/EurekaService/mvnw.cmd
+Backend/MasterService/.mvn/wrapper/maven-wrapper.properties
+Backend/MasterService/.gitattributes
+Backend/MasterService/compose.yaml
+Backend/MasterService/mvnw
+Backend/MasterService/mvnw.cmd
