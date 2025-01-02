@@ -23,7 +23,7 @@ const PeopleTab: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/admin/users", {
+      const response = await axios.get("http://localhost:8084/api/admin/users", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       setUsers(response.data);
@@ -78,7 +78,7 @@ const PeopleTab: React.FC = () => {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      await axios.delete(`http://localhost:8081/api/admin/delete-user/${userId}`, {
+      await axios.delete(`http://localhost:8084/api/admin/delete-user/${userId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       toast.success("User deleted successfully!");
@@ -93,14 +93,14 @@ const PeopleTab: React.FC = () => {
     try {
       if (editingUser) {
         await axios.put(
-          `http://localhost:8081/api/admin/edit-user/${editingUser.userId}`,
+          `http://localhost:8084/api/admin/edit-user/${editingUser.userId}`,
           { firstName, lastName, email, role },
           { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
         );
         toast.success("User updated successfully!");
       } else {
         await axios.post(
-          "http://localhost:8081/api/admin/add-user",
+          "http://localhost:8084/api/admin/add-user",
           { firstName, lastName, email, role },
           { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
         );

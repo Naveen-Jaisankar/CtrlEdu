@@ -50,7 +50,7 @@ useEffect(() => {
 
 const fetchModules = async () => {
     try {
-        const response = await axios.get("http://localhost:8081/api/admin/modules", {
+        const response = await axios.get("http://localhost:8084/api/admin/modules", {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
         });
         setModules(response.data); // Module data is stored in the `modules` state
@@ -63,7 +63,7 @@ const fetchModules = async () => {
   // Fetch unassigned teachers for add
   const fetchAvailableTeachersForAdd = async () => {
     try {
-        const response = await axios.get(`http://localhost:8081/api/admin/available-teachers`, {
+        const response = await axios.get(`http://localhost:8084/api/admin/available-teachers`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
         });
         setTeacherSuggestions(response.data);
@@ -81,7 +81,7 @@ const fetchAllTeachersForEdit = async () => {
 
     try {
         const response = await axios.get(
-            `http://localhost:8081/api/admin/all-teachers?currentTeacherId=${currentTeacherId}`,
+            `http://localhost:8084/api/admin/all-teachers?currentTeacherId=${currentTeacherId}`,
             {
                 headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
             }
@@ -155,7 +155,7 @@ const fetchAllTeachersForEdit = async () => {
 
   const handleDeleteModule = async (moduleId: number) => {
     try {
-      await axios.delete(`http://localhost:8081/api/admin/delete-module/${moduleId}`, {
+      await axios.delete(`http://localhost:8084/api/admin/delete-module/${moduleId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       toast.success("Module deleted successfully!");
@@ -182,14 +182,14 @@ const fetchAllTeachersForEdit = async () => {
 
             // Update the module
             await axios.put(
-                `http://localhost:8081/api/admin/edit-module/${editingModule.moduleId}`,
+                `http://localhost:8084/api/admin/edit-module/${editingModule.moduleId}`,
                 payload,
                 { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
             );
             toast.success("Module updated successfully!");
         } else {
             // Add a new module
-            await axios.post("http://localhost:8081/api/admin/add-module", payload, {
+            await axios.post("http://localhost:8084/api/admin/add-module", payload, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
             });
             toast.success("Module added successfully!");

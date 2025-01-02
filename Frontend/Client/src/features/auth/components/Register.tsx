@@ -22,7 +22,7 @@ const Register: React.FC = () => {
         try {
             if (role === 'organization') {
                 // Organization registration
-                await axios.post('http://localhost:8081/api/auth/register', {
+                await axios.post('http://localhost:8084/api/auth/register', {
                     organization_name: organizationName,
                     first_name: firstName,
                     last_name: lastName,
@@ -34,14 +34,14 @@ const Register: React.FC = () => {
                 // Student/Teacher registration
                 if (step === 1) {
                     // Validate unique code
-                    const response = await axios.post('http://localhost:8081/api/auth/verify-code', {
+                    const response = await axios.post('http://localhost:8084/api/auth/verify-code', {
                         code: uniqueCode,
                     });
                     setStep(2); // Move to email/password setup
                     alert('Unique code validated. Please set your email and password.');
                 } else if (step === 2) {
                     // Set email and password
-                    await axios.post('http://localhost:8081/api/auth/verify-code', {
+                    await axios.post('http://localhost:8084/api/auth/verify-code', {
                         code: uniqueCode,
                         email,
                         password,

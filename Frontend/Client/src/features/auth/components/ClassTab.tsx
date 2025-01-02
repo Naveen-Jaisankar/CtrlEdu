@@ -29,7 +29,7 @@ const ClassTab: React.FC = () => {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/admin/classes", {
+      const response = await axios.get("http://localhost:8084/api/admin/classes", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       setClasses(response.data);
@@ -51,7 +51,7 @@ const ClassTab: React.FC = () => {
 
   const fetchModules = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/admin/modules", {
+      const response = await axios.get("http://localhost:8084/api/admin/modules", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       setModules(response.data);
@@ -62,7 +62,7 @@ const ClassTab: React.FC = () => {
 
   const fetchModulesForDropdown = async () => {
     try {
-        const response = await axios.get("http://localhost:8081/api/admin/modules", {
+        const response = await axios.get("http://localhost:8084/api/admin/modules", {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
         });
         setModuleSuggestions(response.data); // Populate the state with module data
@@ -80,7 +80,7 @@ const ClassTab: React.FC = () => {
         numStudents,
         moduleIds: selectedModules,
       };
-      await axios.post("http://localhost:8081/api/admin/add-class", payload, {
+      await axios.post("http://localhost:8084/api/admin/add-class", payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       toast.success("Class added successfully!");

@@ -15,7 +15,7 @@ const Login: React.FC = () => {
 
         try {
             // Call the backend login API
-            const response = await axios.post('http://localhost:8081/api/auth/login', {
+            const response = await axios.post('http://localhost:8084/api/auth/login', {
                 email,
                 password,
             });
