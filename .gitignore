@@ -141,6 +141,15 @@ Backend/EurekaService/.mvn/wrapper/maven-wrapper.properties
 Backend/EurekaService/.gitattributes
 Backend/EurekaService/mvnw
 Backend/EurekaService/mvnw.cmd
+Backend/ChatService/target/classes/com/ctrledu/ChatService/config/CorsConfig.class
+Backend/MasterService/.mvn/wrapper/maven-wrapper.properties
+Backend/MasterService/target/classes/application.properties
+Backend/MasterService/target/classes/com/ctrledu/MasterService/MasterServiceApplication.class
+Backend/MasterService/.gitattributes
+Backend/MasterService/compose.yaml
+Backend/MasterService/HELP.md
+Backend/MasterService/mvnw
+Backend/MasterService/mvnw.cmd
 Backend/MasterService/.mvn/wrapper/maven-wrapper.properties
 Backend/MasterService/.gitattributes
 Backend/MasterService/compose.yaml
