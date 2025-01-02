@@ -15,7 +15,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // Allow cookies or credentials
-        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173")); // Replace with your frontend origin
+        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000")); // Replace with your frontend origin
         config.addAllowedHeader("*"); // Allow all headers
         config.addAllowedMethod("*"); // Allow all HTTP methods
 

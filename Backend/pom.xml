@@ -15,6 +15,7 @@
         <module>NotificationService</module>
         <module>GatewayService</module>
         <module>EurekaService</module>
+        <module>ChatService</module>
     </modules>
 
     <properties>

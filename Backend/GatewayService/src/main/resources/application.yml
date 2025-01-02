@@ -20,6 +20,10 @@ spring:
           uri: lb://NotificationService
           predicates:
             - Path=/api/notify/**
+        - id: ChatService
+          uri: lb://ChatService
+          predicates:
+            - Path=/api/message/**
     discovery:
       locator:
         enabled: true

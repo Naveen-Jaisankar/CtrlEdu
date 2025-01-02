@@ -24,7 +24,7 @@ const ChatWindow: React.FC<{ topic: string }> = ({ topic }) => {
 
   // Initialize WebSocket
   const { sendMessage: sendWebSocketMessage } = useWebSocket<Message>(
-    `ws://localhost:8080/ws-chat`,
+    `ws://localhost:8085/ws-chat`,
     handleWebSocketMessage
   );
 

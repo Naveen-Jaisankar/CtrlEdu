@@ -2,7 +2,7 @@ import axios from "axios";
 import { Message } from "../types/Message";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: "http://localhost:8084/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -33,5 +33,6 @@ export const getMessages = async (
   const response = await apiClient.get<{ messages: Message[] }>("/message", {
     params: { topic, offset },
   });
+  console.log(response);
   return response.data.messages;
 };
