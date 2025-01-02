@@ -16,6 +16,10 @@ const ClassTab: React.FC = () => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [classList, setClassList] = useState([]); // Initialize with an empty array
   const [moduleSuggestions, setModuleSuggestions] = useState([]); // Initialize as empty
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [availableStudents, setAvailableStudents] = useState([]);
+
 
   useEffect(() => {
     fetchClasses();
@@ -25,6 +29,11 @@ const ClassTab: React.FC = () => {
   useEffect(() => {
     fetchModulesForDropdown();
 }, []);
+
+useEffect(() => {
+  fetchStudents();
+}, []);
+
 
 
   const fetchClasses = async () => {
@@ -38,6 +47,33 @@ const ClassTab: React.FC = () => {
     }
   };
 
+  const handleStudentSelection = (student) => {
+    if (selectedStudents.length >= numStudents) {
+        toast.error(`You can only select up to ${numStudents} students.`);
+        return;
+    }
+    setAvailableStudents(availableStudents.filter((s) => s.id !== student.id));
+    setSelectedStudents([...selectedStudents, student]);
+};
+
+
+const handleStudentRemoval = (student) => {
+    setSelectedStudents(selectedStudents.filter((s) => s.id !== student.id));
+    setAvailableStudents([...availableStudents, student]);
+};
+
+
+
+
+  const payload = {
+    className,
+    moduleIds: selectedModules,
+    studentIds: selectedStudents.map((s) => s.id),
+};
+
+  
+  
+
   const fetchClassData = async () => {
     try {
       const response = await axios.get("/api/classes");
@@ -47,7 +83,27 @@ const ClassTab: React.FC = () => {
       setClassList([]); // Set as empty to avoid undefined issues
     }
   };
-  
+
+  const fetchStudents = async () => {
+    try {
+        const response = await axios.get("http://localhost:8084/api/admin/students", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+        });
+        const students = response.data.map((student) => ({
+            id: student.studentId,
+            firstName: student.firstName,
+            lastName: student.lastName,
+            isAssigned: student.isAssigned,
+        }));
+        setAvailableStudents(students.filter((s) => !s.isAssigned));
+        setSelectedStudents(students.filter((s) => s.isAssigned));
+    } catch (error) {
+        console.error("Error fetching students:", error);
+        toast.error("Failed to fetch students.");
+    }
+};
+
+
 
   const fetchModules = async () => {
     try {
@@ -72,25 +128,36 @@ const ClassTab: React.FC = () => {
 };
 
 
-  const handleAddClass = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
+const handleAddClass = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (selectedStudents.length > numStudents) {
+      toast.error("The number of selected students exceeds the allowed limit.");
+      return;
+  }
+  console.log("handleAddClass triggered");
+  try {
       const payload = {
-        className,
-        numStudents,
-        moduleIds: selectedModules,
+          className,
+          numberOfStudents: numStudents, // Fix key name
+          moduleIds: selectedModules,
+          studentIds: selectedStudents.map((s) => s.id),
       };
+      console.log("Payload:", payload);
+
       await axios.post("http://localhost:8084/api/admin/add-class", payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       toast.success("Class added successfully!");
       setIsModalOpen(false);
       fetchClasses();
+      fetchStudents();
       resetForm();
-    } catch (error) {
+  } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add class.");
-    }
-  };
+  }
+};
+
+
 
   const resetForm = () => {
     setClassName("");
@@ -121,12 +188,22 @@ const handleSort = (column: string) => {
 };
 
 const sortedClasses = [...classes].sort((a, b) => {
-  const valueA = a[sortColumn]?.toString().toLowerCase() || "";
-  const valueB = b[sortColumn]?.toString().toLowerCase() || "";
-  return sortDirection === "asc"
-    ? valueA.localeCompare(valueB)
-    : valueB.localeCompare(valueA);
+  const valueA = a[sortColumn];
+  const valueB = b[sortColumn];
+
+  if (typeof valueA === "number" && typeof valueB === "number") {
+    // Numeric sorting
+    return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
+  } else {
+    // String sorting
+    const stringValueA = valueA?.toString().toLowerCase() || "";
+    const stringValueB = valueB?.toString().toLowerCase() || "";
+    return sortDirection === "asc"
+      ? stringValueA.localeCompare(stringValueB)
+      : stringValueB.localeCompare(stringValueA);
+  }
 });
+
 
 const filteredClasses = sortedClasses.filter((cls) =>
   cls.className.toLowerCase().includes(searchTerm.toLowerCase())
@@ -167,10 +244,11 @@ useEffect(() => {
             </th>
             <th
               className="py-2 px-4 cursor-pointer"
-              onClick={() => handleSort("numberOfStudents")}
+              onClick={() => handleSort("numStudents")} // Use "numStudents" as the column key
             >
-              Number of Students {sortColumn === "numberOfStudents" && (sortDirection === "asc" ? "▲" : "▼")}
+              Number of Students {sortColumn === "numStudents" && (sortDirection === "asc" ? "▲" : "▼")}
             </th>
+
             <th
               className="py-2 px-4 cursor-pointer"
               onClick={() => handleSort("moduleNames")}
@@ -243,22 +321,98 @@ useEffect(() => {
         ))}
     </div>
 </div>
+<label>Students:</label>
+<div>
+    <p>Remaining slots: {numStudents - selectedStudents.length}</p>
+</div>
+<div style={{ color: selectedStudents.length >= numStudents ? "red" : "black" }}>
+    {selectedStudents.length >= numStudents
+        ? "You have reached the maximum number of students."
+        : `You can select ${numStudents - selectedStudents.length} more students.`}
+</div>
 
-    <div className="flex justify-end gap-2">
-      <button
-        type="button"
-        onClick={handleCloseModal}
-        className="bg-gray-500 hover:bg-gray-700 text-white py-1 px-3 rounded"
-      >
-        Cancel
-      </button>
-      <button
-        type="submit"
-        className="bg-orange-500 hover:bg-orange-700 text-white py-1 px-3 rounded"
-      >
-        Add Class
-      </button>
-    </div>
+<div className="dual-list-box-container" style={{ display: "flex", gap: "20px" }}>
+  {/* Available Students */}
+  {/* Available Students */}
+<div style={{ flex: 1 }}>
+  <h3>Available Students</h3>
+  <select
+    multiple
+    value={[]}
+    style={{ width: "100%", height: "200px" }}
+    onChange={(e) => {
+      const selectedOptions = Array.from(e.target.selectedOptions).map((option) => JSON.parse(option.value));
+      selectedOptions.forEach((student) => handleStudentSelection(student));
+    }}
+  >
+    {availableStudents.map((student) => (
+      <option key={student.id} value={JSON.stringify(student)}>
+        {student.firstName} {student.lastName}
+      </option>
+    ))}
+  </select>
+</div>
+
+
+  {/* Transfer Buttons */}
+  <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "10px" }}>
+    <button
+      onClick={() =>
+        availableStudents.forEach((student) => handleStudentSelection(student))
+      }
+    >
+      &gt;&gt;
+    </button>
+    <button
+      onClick={() =>
+        selectedStudents.forEach((student) => handleStudentRemoval(student))
+      }
+    >
+      &lt;&lt;
+    </button>
+  </div>
+
+  {/* Selected Students */}
+  <div style={{ flex: 1 }}>
+    <h3>Selected Students</h3>
+    <select
+      multiple
+      style={{ width: "100%", height: "200px" }}
+      onChange={(e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions).map(
+          (option) => JSON.parse(option.value)
+        );
+        selectedOptions.forEach((student) => handleStudentRemoval(student));
+      }}
+    >
+      {selectedStudents.map((student) => (
+        <option
+          key={student.id}
+          value={JSON.stringify(student)}
+        >
+          {student.firstName} {student.lastName}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+<div className="flex justify-end gap-2">
+  <button
+    type="button"
+    onClick={handleCloseModal}
+    className="bg-gray-500 hover:bg-gray-700 text-white py-1 px-3 rounded"
+  >
+    Cancel
+  </button>
+  <button
+    type="submit"
+    className="bg-orange-500 hover:bg-orange-700 text-white py-1 px-3 rounded"
+  >
+    Add Class
+  </button>
+</div>
+
+
   </form>
 </Modal>
 
