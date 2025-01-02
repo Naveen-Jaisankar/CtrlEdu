@@ -1,15 +1,5 @@
 package com.ctrledu.AuthService.repository;
 
-<<<<<<< HEAD
-import com.ctrledu.AuthService.entity.UserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
-
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByUserEmail(String email);
-    Optional<UserEntity> findByUniqueCode(String uniqueCode);
-=======
 import com.ctrledu.AuthService.entity.ModuleEntity;
 import com.ctrledu.AuthService.entity.OrganizationEntity;
 import com.ctrledu.AuthService.entity.UserEntity;
@@ -111,5 +101,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 
 
->>>>>>> feature_auth
 }

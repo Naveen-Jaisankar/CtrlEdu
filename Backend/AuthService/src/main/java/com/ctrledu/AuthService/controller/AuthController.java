@@ -4,7 +4,7 @@ import com.ctrledu.AuthService.dto.LoginRequest;
 import com.ctrledu.AuthService.dto.RegisterRequest;
 import com.ctrledu.AuthService.dto.VerifyCodeRequest;
 import com.ctrledu.AuthService.entity.UserEntity;
-import com.ctrledu.AuthService.repository.OrganizationReporsitory;
+import com.ctrledu.AuthService.repository.OrganizationRepository;
 import com.ctrledu.AuthService.repository.UserRepository;
 import com.ctrledu.AuthService.response.ResponseDTO;
 import com.ctrledu.AuthService.service.AuthService;
@@ -23,7 +23,7 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private OrganizationReporsitory organizationReporsitory;
+    private OrganizationRepository organizationRepository;
 
     @Autowired
     private KeycloakService keycloakService;
