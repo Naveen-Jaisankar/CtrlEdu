@@ -30,11 +30,12 @@ spring:
         lower-case-service-id: true
 eureka:
   instance:
-    hostname: localhost # or the IP address of the machine
+    hostname: gateway # or the IP address of the machine
     prefer-ip-address: true
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/ # Replace with your Eureka server URL
+      defaultZone: http://eureka:8761/eureka/
+      # Replace with your Eureka server URL
 
