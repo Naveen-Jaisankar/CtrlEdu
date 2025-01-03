@@ -194,7 +194,7 @@ const fetchAllTeachersForEdit = async () => {
             });
             toast.success("Module added successfully!");
         }
-
+        resetForm();
         setIsModalOpen(false);
         fetchModules(); // Refresh the module list
     } catch (error) {

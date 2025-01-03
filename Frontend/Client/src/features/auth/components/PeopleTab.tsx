@@ -106,6 +106,7 @@ const PeopleTab: React.FC = () => {
         );
         toast.success("User added successfully!");
       }
+      resetForm();
       setIsModalOpen(false);
       fetchUsers();
     } catch (error) {

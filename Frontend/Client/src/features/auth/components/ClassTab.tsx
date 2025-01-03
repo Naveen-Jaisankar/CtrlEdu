@@ -186,7 +186,7 @@ const handleAddOrEditClass = async (e: React.FormEvent) => {
           });
           toast.success("Class added successfully!");
       }
-
+      resetForm();
       setIsModalOpen(false);
       fetchClasses(); // Refresh the list
       fetchStudents();

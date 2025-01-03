@@ -1,56 +1,53 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import authService from '../../../services/authService';
+import React from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { FiBook, FiUsers, FiMessageCircle } from "react-icons/fi";
+import Logout from "./Logout";
 
 const TeacherDashboard: React.FC = () => {
-    const [userData, setUserData] = useState<{ email: string } | null>(null);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const token = localStorage.getItem("accessToken");
-            if (!token) {
-                navigate("/login"); // Redirect if not authenticated
-                return;
-            }
-
-            try {
-                // Fetch user info using the token
-                const user = await authService.getUserInfo(token);
-                setUserData(user);
-            } catch (error) {
-                console.error("Error fetching user data", error);
-                navigate("/login"); // Redirect on error
-            }
-        };
-
-        fetchUserData();
-    }, [navigate]);
-
-    return (
-        <div className="min-h-screen bg-gray-100 flex flex-col">
-            <header className="bg-blue-600 text-white p-4 shadow">
-                <h1 className="text-2xl">Teacher Dashboard</h1>
-            </header>
-            <main className="flex-grow p-6">
-                {userData ? (
-                    <div>
-                        <h2 className="text-xl">Welcome, {userData.email}</h2>
-                        <p>Manage your courses and assignments here.</p>
-                        {/* Add specific teacher-related functionality here */}
-                        <button
-                            onClick={() => authService.logout() && navigate("/login")}
-                            className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
-                        >
-                            Logout
-                        </button>
-                    </div>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+  return (
+    <div className="flex h-screen bg-neutral-900 text-white">
+      {/* Sidebar */}
+      <div className="w-48 flex flex-col items-center bg-neutral-800 text-white py-6 space-y-6 shadow-lg">
+        <h1 className="text-xl font-bold mb-4">CtrlEdu Teacher</h1>
+        <div
+          className="flex flex-col space-y-6 text-sm w-full"
+          style={{ maxWidth: "150px" }}
+        >
+          <button
+            className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
+            onClick={() => navigate("/teacher-dashboard/modules")}
+          >
+            <FiBook />
+            Modules
+          </button>
+          <button
+            className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
+            onClick={() => navigate("/teacher-dashboard/students")}
+          >
+            <FiUsers />
+            Students
+          </button>
+          <button
+            className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
+            onClick={() => navigate("/teacher-dashboard/Chat-tab")}
+          >
+            <FiMessageCircle />
+            Messages
+          </button>
+          <div className="mt-auto">
+            <Logout />
+          </div>
         </div>
-    );
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex-1 p-6">
+        <Outlet />
+      </div>
+    </div>
+  );
 };
 
 export default TeacherDashboard;

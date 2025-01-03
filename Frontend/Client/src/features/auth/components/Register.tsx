@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const Register: React.FC = () => {
     const [role, setRole] = useState<string>(''); // Role selected by the user
@@ -10,6 +12,8 @@ const Register: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [uniqueCode, setUniqueCode] = useState<string>('');
     const [step, setStep] = useState<number>(0); // Step 0: Role Selection, Step 1: Enter Details
+    const navigate = useNavigate();
+
 
     const handleRoleSelection = (selectedRole: string) => {
         setRole(selectedRole);
@@ -30,6 +34,7 @@ const Register: React.FC = () => {
                     password,
                 });
                 alert('Organization registered successfully!');
+                navigate('/login');
             } else {
                 // Student/Teacher registration
                 if (step === 1) {
@@ -47,6 +52,7 @@ const Register: React.FC = () => {
                         password,
                     });
                     alert('Registration complete! You can now log in.');
+                    navigate('/login');
                 }
             }
         } catch (error: any) {
