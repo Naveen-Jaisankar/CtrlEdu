@@ -70,6 +70,7 @@ const App: React.FC = () => {
           <Route path="Module-tab" element={<ModuleTab />} />
           <Route path="Chat-tab" element={<ChatPage />} />
         </Route>
+
         <Route
           path="/teacher-dashboard"
           element={
@@ -77,7 +78,12 @@ const App: React.FC = () => {
               <TeacherDashboard />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="module-tab" element={<PeopleTab />} />
+          <Route path="students-tab" element={<ClassTab />} />
+          <Route path="Chat-tab" element={<ChatPage />} />
+        </Route>
+
         <Route
           path="/student-dashboard"
           element={
@@ -85,7 +91,10 @@ const App: React.FC = () => {
               <StudentDashboard />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="module-tab" element={<PeopleTab />} />
+          <Route path="Chat-tab" element={<ChatPage />} />
+        </Route>
 
         {/* Catch-All Route for Undefined Paths */}
         <Route path="*" element={<Navigate to="/" replace />} />
