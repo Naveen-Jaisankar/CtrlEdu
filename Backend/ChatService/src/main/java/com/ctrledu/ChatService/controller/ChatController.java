@@ -1,6 +1,4 @@
 package com.ctrledu.ChatService.controller;
-import com.ctrledu.AuthService.entity.ClassEntity;
-import com.ctrledu.AuthService.entity.ModuleEntity;
 import com.ctrledu.ChatService.constants.KafkaConstants;
 import com.ctrledu.ChatService.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
