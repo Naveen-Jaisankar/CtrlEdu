@@ -1,6 +1,13 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { FiUsers, FiBook, FiHome, FiCreditCard, FiCalendar } from "react-icons/fi";
+import {
+  FiUsers,
+  FiBook,
+  FiHome,
+  FiCreditCard,
+  FiCalendar,
+  FiMessageCircle,
+} from "react-icons/fi";
 import Logout from "./Logout";
 
 const AdminLayout: React.FC = () => {
@@ -42,6 +49,13 @@ const AdminLayout: React.FC = () => {
           >
             <FiBook />
             Class
+          </button>
+          <button
+            className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
+            onClick={() => navigate("/admin/Chat-tab")}
+          >
+            <FiMessageCircle />
+            Messages
           </button>
           <div className="mt-auto">
             <Logout />

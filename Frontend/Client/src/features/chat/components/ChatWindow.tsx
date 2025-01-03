@@ -5,14 +5,10 @@ import ChatInput from "./ChatInput";
 import useWebSocket from "../hooks/useWebSocket";
 import { sendMessage, getMessages } from "../services/chatService";
 import { Message } from "../types/Message";
+import { formatTime } from "../utils/common";
 
 const ChatWindow: React.FC<{ topic: string }> = ({ topic }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-
-  const formatTime = (timestamp: number): string => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
 
   // Handle new messages received via WebSocket
   const handleWebSocketMessage = useCallback((newMessage: Message) => {
@@ -55,6 +51,7 @@ const ChatWindow: React.FC<{ topic: string }> = ({ topic }) => {
       content,
       topic,
       timestamp: Date.now(),
+      time: "",
     };
 
     try {

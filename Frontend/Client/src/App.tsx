@@ -55,7 +55,6 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/first-login" element={<FirstLogin />} />
-        <Route path="/ctrlchat" element={<ChatPage />} />
 
         {/* Protected Routes */}
         <Route
@@ -69,6 +68,7 @@ const App: React.FC = () => {
           <Route path="people-tab" element={<PeopleTab />} />
           <Route path="class-tab" element={<ClassTab />} />
           <Route path="Module-tab" element={<ModuleTab />} />
+          <Route path="Chat-tab" element={<ChatPage />} />
         </Route>
         <Route
           path="/teacher-dashboard"

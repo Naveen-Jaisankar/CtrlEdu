@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 type Message = {
   sender: string;
   content: string;
@@ -7,7 +9,13 @@ type Message = {
 type MessageListProps = {
   messages: Message[];
 };
+
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   return (
     <div className="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50 dark:bg-gray-900">
       {messages.map((msg, index) => (
@@ -31,6 +39,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
           </div>
         </div>
       ))}
+
+      <div ref={messagesEndRef}></div>
     </div>
   );
 };

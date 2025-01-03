@@ -16,6 +16,10 @@ const ClassTab: React.FC = () => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [classList, setClassList] = useState([]); // Initialize with an empty array
   const [moduleSuggestions, setModuleSuggestions] = useState([]); // Initialize as empty
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [availableStudents, setAvailableStudents] = useState([]);
+
 
   useEffect(() => {
     fetchClasses();
@@ -25,6 +29,11 @@ const ClassTab: React.FC = () => {
   useEffect(() => {
     fetchModulesForDropdown();
 }, []);
+
+useEffect(() => {
+  fetchStudents();
+}, []);
+
 
 
   const fetchClasses = async () => {
@@ -38,6 +47,31 @@ const ClassTab: React.FC = () => {
     }
   };
 
+  const handleStudentSelection = (studentId) => {
+    const student = availableStudents.find((s) => s.id === studentId);
+    if (student) {
+      setAvailableStudents(availableStudents.filter((s) => s.id !== studentId));
+      setSelectedStudents([...selectedStudents, student]);
+    }
+  };
+  
+  const handleStudentRemoval = (studentId) => {
+    const student = selectedStudents.find((s) => s.id === studentId);
+    if (student) {
+      setSelectedStudents(selectedStudents.filter((s) => s.id !== studentId));
+      setAvailableStudents([...availableStudents, student]);
+    }
+  };
+
+  const payload = {
+    className,
+    moduleIds: selectedModules,
+    studentIds: selectedStudents.map((s) => s.id),
+};
+
+  
+  
+
   const fetchClassData = async () => {
     try {
       const response = await axios.get("/api/classes");
@@ -47,6 +81,31 @@ const ClassTab: React.FC = () => {
       setClassList([]); // Set as empty to avoid undefined issues
     }
   };
+
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get("/api/admin/students", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+      });
+      setStudents(response.data);
+      setAvailableStudents(response.data); // Initialize available students
+    } catch (error) {
+      toast.error("Failed to fetch students.");
+    }
+  };
+  const fetchAvailableStudents = async () => {
+    try {
+        const response = await axios.get('/api/path-to-fetch-students', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        });
+        setAvailableStudents(response.data || []); // Fallback to an empty array
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        setAvailableStudents([]); // Set to an empty array in case of an error
+    }
+};
+
+  
   
 
   const fetchModules = async () => {
@@ -244,21 +303,81 @@ useEffect(() => {
     </div>
 </div>
 
-    <div className="flex justify-end gap-2">
-      <button
-        type="button"
-        onClick={handleCloseModal}
-        className="bg-gray-500 hover:bg-gray-700 text-white py-1 px-3 rounded"
-      >
-        Cancel
-      </button>
-      <button
-        type="submit"
-        className="bg-orange-500 hover:bg-orange-700 text-white py-1 px-3 rounded"
-      >
-        Add Class
-      </button>
-    </div>
+<div className="flex justify-end gap-2">
+  <button
+    type="button"
+    onClick={handleCloseModal}
+    className="bg-gray-500 hover:bg-gray-700 text-white py-1 px-3 rounded"
+  >
+    Cancel
+  </button>
+  <button
+    type="submit"
+    className="bg-orange-500 hover:bg-orange-700 text-white py-1 px-3 rounded"
+  >
+    Add Class
+  </button>
+</div>
+
+<label>Students:</label>
+<div className="dual-list-box">
+  {/* Available Students */}
+  <div>
+    <h3>Available Students</h3>
+    <ul>
+      {Array.isArray(availableStudents) &&
+        availableStudents.map((student) => (
+          <li
+            key={student.id}
+            onClick={() => handleStudentSelection(student)}
+            className="cursor-pointer"
+          >
+            {student.firstName} {student.lastName}
+          </li>
+        ))}
+    </ul>
+  </div>
+
+  {/* Transfer Buttons */}
+  <div>
+    <button
+      type="button"
+      onClick={() =>
+        availableStudents.forEach((student) => handleStudentSelection(student))
+      }
+      className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded mb-2"
+    >
+      &gt;&gt;
+    </button>
+    <button
+      type="button"
+      onClick={() =>
+        selectedStudents.forEach((student) => handleStudentRemoval(student))
+      }
+      className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded"
+    >
+      &lt;&lt;
+    </button>
+  </div>
+
+  {/* Selected Students */}
+  <div>
+    <h3>Selected Students</h3>
+    <ul>
+      {selectedStudents.map((student) => (
+        <li
+          key={student.id}
+          onClick={() => handleStudentRemoval(student)}
+          className="cursor-pointer"
+        >
+          {student.firstName} {student.lastName}
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+
   </form>
 </Modal>
 
