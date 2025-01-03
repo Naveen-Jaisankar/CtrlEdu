@@ -42,4 +42,52 @@ public class ClassEntity {
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private Set<UserEntity> students = new HashSet<>(); // Students associated with the class
+
+    public Long getClassId() {
+        return classId;
+    }
+
+    public void setClassId(Long classId) {
+        this.classId = classId;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public Integer getNumberOfStudents() {
+        return numberOfStudents;
+    }
+
+    public void setNumberOfStudents(Integer numberOfStudents) {
+        this.numberOfStudents = numberOfStudents;
+    }
+
+    public OrganizationEntity getOrg() {
+        return org;
+    }
+
+    public void setOrg(OrganizationEntity org) {
+        this.org = org;
+    }
+
+    public Set<ModuleEntity> getModules() {
+        return modules;
+    }
+
+    public void setModules(Set<ModuleEntity> modules) {
+        this.modules = modules;
+    }
+
+    public Set<UserEntity> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<UserEntity> students) {
+        this.students = students;
+    }
 }

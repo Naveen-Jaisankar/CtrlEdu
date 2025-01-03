@@ -46,6 +46,13 @@ public class ClassController {
         classService.editClass(classId, request);
         return ResponseEntity.ok("Class updated successfully.");
     }
+
+    @DeleteMapping("/delete-class/{classId}")
+    public ResponseEntity<String> deleteClass(@PathVariable Long classId) {
+        classService.deleteClass(classId);
+        return ResponseEntity.ok("Class deleted successfully.");
+    }
+
     @GetMapping("/students")
     public List<StudentResponse> getStudents() {
         String email = ThreadContext.getEmail(); // Retrieve the email of the logged-in admin

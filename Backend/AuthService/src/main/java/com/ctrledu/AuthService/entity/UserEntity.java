@@ -49,4 +49,68 @@ public class UserEntity {
         this.isCodeUsed = isCodeUsed;
         this.orgId = orgId;
     }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
+    }
+
+    public String getUserLastName() {
+        return userLastName;
+    }
+
+    public void setUserLastName(String userLastName) {
+        this.userLastName = userLastName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
+
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
+    }
+
+    public boolean isCodeUsed() {
+        return isCodeUsed;
+    }
+
+    public void setCodeUsed(boolean codeUsed) {
+        isCodeUsed = codeUsed;
+    }
+
+    public OrganizationEntity getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(OrganizationEntity orgId) {
+        this.orgId = orgId;
+    }
 }

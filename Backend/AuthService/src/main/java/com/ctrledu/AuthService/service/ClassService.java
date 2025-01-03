@@ -39,9 +39,13 @@ public class ClassService {
     private AdminService adminService;
 
     public List<ClassResponse> getClassesByOrgId(Long orgId) {
-        List<ClassEntity> classes = classRepository.findByOrgIdWithStudents(orgId);
+        List<ClassEntity> classes = classRepository.findByOrgIdWithStudentsAndModules(orgId);
 
         return classes.stream().map(classEntity -> {
+            List<Long> moduleIds = classEntity.getModules().stream()
+                    .map(ModuleEntity::getModuleId)
+                    .collect(Collectors.toList()); // Get module IDs
+
             List<Long> studentIds = classEntity.getStudents().stream()
                     .map(UserEntity::getUserId)
                     .collect(Collectors.toList());
@@ -58,12 +62,14 @@ public class ClassService {
                     classEntity.getClassId(),
                     classEntity.getClassName(),
                     classEntity.getNumberOfStudents(),
+                    moduleIds, // Include moduleIds
                     studentIds,
                     studentNames,
                     moduleNames
             );
         }).collect(Collectors.toList());
     }
+
 
     public void addClass(ClassRequest request) {
         System.out.println("Received request: " + request);
@@ -121,23 +127,23 @@ public class ClassService {
 
 
 
-    public void editClass(Long classId, ClassRequest request) {
-        ClassEntity classEntity = classRepository.findById(classId)
-                .orElseThrow(() -> new IllegalArgumentException("Class not found."));
-
-        classEntity.setClassName(request.getClassName());
-        classEntity.setNumberOfStudents(request.getNumberOfStudents());
-
-        // Update modules
-        List<ModuleEntity> modules = moduleRepository.findAllById(request.getModuleIds());
-        classEntity.setModules(new HashSet<>(modules));
-
-        // Update students
-        List<UserEntity> students = userRepository.findAllById(request.getStudentIds());
-        classEntity.setStudents(new HashSet<>(students));
-
-        classRepository.save(classEntity);
-    }
+//    public void editClass(Long classId, ClassRequest request) {
+//        ClassEntity classEntity = classRepository.findById(classId)
+//                .orElseThrow(() -> new IllegalArgumentException("Class not found."));
+//
+//        classEntity.setClassName(request.getClassName());
+//        classEntity.setNumberOfStudents(request.getNumberOfStudents());
+//
+//        // Update modules
+//        List<ModuleEntity> modules = moduleRepository.findAllById(request.getModuleIds());
+//        classEntity.setModules(new HashSet<>(modules));
+//
+//        // Update students
+//        List<UserEntity> students = userRepository.findAllById(request.getStudentIds());
+//        classEntity.setStudents(new HashSet<>(students));
+//
+//        classRepository.save(classEntity);
+//    }
 //    public List<ClassResponse> getClasses(Long orgId) {
 //        List<ClassEntity> classes = classRepository.findByOrgIdWithStudents(orgId);
 //
@@ -170,6 +176,55 @@ public List<StudentResponse> getStudentsByOrgId(Long orgId) {
             ))
             .collect(Collectors.toList());
 }
+    public void editClass(Long classId, ClassRequest request) {
+        // Fetch class entity
+        ClassEntity classEntity = classRepository.findById(classId)
+                .orElseThrow(() -> new IllegalArgumentException("Class not found."));
+
+        // Validate inputs
+        if (request.getClassName() == null || request.getClassName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Class name cannot be null or empty");
+        }
+        if (request.getNumberOfStudents() <= 0) {
+            throw new IllegalArgumentException("Number of students must be greater than zero");
+        }
+        if (request.getModuleIds() == null || request.getModuleIds().isEmpty()) {
+            throw new IllegalArgumentException("At least one module must be associated with the class");
+        }
+        if (request.getStudentIds() == null || request.getStudentIds().isEmpty()) {
+            throw new IllegalArgumentException("At least one student must be associated with the class");
+        }
+
+        // Update class details
+        classEntity.setClassName(request.getClassName());
+        classEntity.setNumberOfStudents(request.getNumberOfStudents());
+
+        // Update associated modules
+        List<ModuleEntity> modules = moduleRepository.findAllById(request.getModuleIds());
+        if (modules.isEmpty()) {
+            throw new IllegalArgumentException("Invalid module IDs provided");
+        }
+        classEntity.setModules(new HashSet<>(modules));
+
+        // Update associated students
+        List<UserEntity> students = userRepository.findAllById(request.getStudentIds());
+        if (students.isEmpty()) {
+            throw new IllegalArgumentException("Invalid student IDs provided");
+        }
+        classEntity.setStudents(new HashSet<>(students));
+
+        // Save updated class
+        classRepository.save(classEntity);
+    }
+
+
+    public void deleteClass(Long classId) {
+        ClassEntity classEntity = classRepository.findById(classId)
+                .orElseThrow(() -> new IllegalArgumentException("Class not found."));
+
+        classRepository.delete(classEntity);
+    }
+
 
 
 
