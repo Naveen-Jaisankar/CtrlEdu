@@ -18,6 +18,9 @@ import ChatPage from "./features/chat/pages/ChatPage";
 import ClassTab from "./features/auth/components/ClassTab";
 import PeopleTab from "./features/auth/components/PeopleTab";
 import ModuleTab from "./features/auth/components/ModuleTab";
+import StudentModuleTab from "./features/auth/components/StudentModuleTab";
+import TeacherModuleTab from "./features/auth/components/TeacherModuleTab";
+import StudentsTab from "./features/auth/components/StudentsTab";
 
 const App: React.FC = () => {
   // Helper function to check if the user is authenticated
@@ -70,7 +73,6 @@ const App: React.FC = () => {
           <Route path="Module-tab" element={<ModuleTab />} />
           <Route path="Chat-tab" element={<ChatPage />} />
         </Route>
-
         <Route
           path="/teacher-dashboard"
           element={
@@ -79,8 +81,8 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="module-tab" element={<PeopleTab />} />
-          <Route path="students-tab" element={<ClassTab />} />
+          <Route path="modules" element={<TeacherModuleTab />} />
+          <Route path="students" element={<StudentsTab />} />
           <Route path="Chat-tab" element={<ChatPage />} />
         </Route>
 
@@ -92,7 +94,7 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="module-tab" element={<PeopleTab />} />
+          <Route path="modules" element={<StudentModuleTab />} />
           <Route path="Chat-tab" element={<ChatPage />} />
         </Route>
 

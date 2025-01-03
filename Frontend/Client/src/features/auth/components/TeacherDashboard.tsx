@@ -17,14 +17,14 @@ const TeacherDashboard: React.FC = () => {
         >
           <button
             className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
-            onClick={() => navigate("/teacher/modules")}
+            onClick={() => navigate("/teacher-dashboard/modules")}
           >
             <FiBook />
             Modules
           </button>
           <button
             className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
-            onClick={() => navigate("/teacher/students")}
+            onClick={() => navigate("/teacher-dashboard/students")}
           >
             <FiUsers />
             Students

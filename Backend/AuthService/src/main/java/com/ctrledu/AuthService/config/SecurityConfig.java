@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .addFilterAfter(new RequestContextFilter(), BearerTokenAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("super-admin")
+                .requestMatchers("/api/admin/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()

@@ -17,7 +17,7 @@ const StudentDashboard: React.FC = () => {
         >
           <button
             className="flex items-center gap-2 hover:text-orange-500 w-full px-3"
-            onClick={() => navigate("/student/courses")}
+            onClick={() => navigate("/student-dashboard/modules")}
           >
             <FiBook />
             Modules

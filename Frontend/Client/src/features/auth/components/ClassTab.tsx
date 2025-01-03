@@ -208,6 +208,7 @@ const ClassTab: React.FC = () => {
         });
         toast.success("Class added successfully!");
       }
+      resetForm();
 
       setIsModalOpen(false);
       fetchClasses(); // Refresh the list
