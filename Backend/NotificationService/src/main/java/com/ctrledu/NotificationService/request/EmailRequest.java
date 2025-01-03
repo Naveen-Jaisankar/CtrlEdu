@@ -6,15 +6,19 @@ public class EmailRequest implements Serializable {
 
     private String to;
     private String subject;
-    private String body;
+
+    private String name;
+
+    private String uniqueCode;
 
     public EmailRequest() {
     }
 
-    public EmailRequest(String to, String subject, String body) {
+    public EmailRequest(String to, String subject, String name, String uniqueCode) {
         this.to = to;
         this.subject = subject;
-        this.body = body;
+        this.name = name;
+        this.uniqueCode = uniqueCode;
     }
 
     public String getTo() {
@@ -33,11 +37,19 @@ public class EmailRequest implements Serializable {
         this.subject = subject;
     }
 
-    public String getBody() {
-        return body;
+    public String getName() {
+        return name;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 }

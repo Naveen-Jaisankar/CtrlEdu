@@ -12,8 +12,8 @@ public class EmailQueueService {
     private RabbitTemplate rabbitTemplate;
 
     //This method add the email to the message queue
-    public void enqueueEmail(String to, String subject, String messageBody){
-        EmailRequest emailMessage = new EmailRequest(to,subject,messageBody);
+    public void enqueueEmail(String to, String subject, String name,String uniqueCode){
+        EmailRequest emailMessage = new EmailRequest(to,subject,name,uniqueCode);
         rabbitTemplate.convertAndSend("emailQueue", emailMessage);
     }
 }
