@@ -25,7 +25,7 @@ import java.util.Map;
 @Service
 public class KeycloakService {
 
-    private final String keycloakServerUrl = "http://localhost:8080/";
+    private final String keycloakServerUrl = "http://keycloak:8080/";
     private final String realm = "CtrlEdu";
     private final String clientId = "admin-cli";
     private final String adminUsername = "admin";

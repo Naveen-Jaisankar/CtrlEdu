@@ -40,7 +40,7 @@ public class AuthService {
     @Autowired
     private KeycloakService keycloakService;
 
-    private final String keycloakServerUrl = "http://localhost:8080/";
+    private final String keycloakServerUrl = "http://keycloak:8080/";
     private final String realm = "CtrlEdu";
     private final String clientId = "ctrledu-client";
 

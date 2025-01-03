@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class SecurityConfig {
 
-    private final String jwkSetUri = "http://localhost:8080/realms/CtrlEdu/protocol/openid-connect/certs";
+    private final String jwkSetUri = "http://keycloak:8080/realms/CtrlEdu/protocol/openid-connect/certs";
 
     @Bean(name = "authSecurityFilterChain")
     public SecurityFilterChain securityFilterChain(HttpSecurity http,

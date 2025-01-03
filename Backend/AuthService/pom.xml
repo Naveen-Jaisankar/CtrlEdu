@@ -13,6 +13,7 @@
     <artifactId>AuthService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>AuthService</name>
+    <packaging>jar</packaging>
     <description>Authentication Service for Ctrl+Edu</description>
 
     <dependencies>
@@ -84,13 +85,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>21.0.0</version>
-        </dependency>
-
-
         <!-- Lombok for Simplified Java Code -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -125,5 +119,27 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.ctrledu.NotificationService.NotificationServiceApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
 
 </project>
