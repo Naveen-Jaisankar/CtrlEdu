@@ -7,11 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class StudentDTO {
-    private Long studentId;
-    private String studentName;
+public class UserDTO {
+    private Long userID;
+    private String userName;
     private Long classId;
     private String className;
     private Long moduleId;
     private String moduleName;
 }
+

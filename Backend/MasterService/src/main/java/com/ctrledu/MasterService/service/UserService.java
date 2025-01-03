@@ -4,8 +4,7 @@ package com.ctrledu.MasterService.service;
 import com.ctrledu.AuthService.entity.ClassEntity;
 import com.ctrledu.AuthService.entity.ModuleEntity;
 import com.ctrledu.AuthService.entity.UserEntity;
-import com.ctrledu.MasterService.model.StudentDTO;
-import com.ctrledu.MasterService.model.TeacherDTO;
+import com.ctrledu.MasterService.model.UserDTO;
 import com.ctrledu.MasterService.repository.MasterClassRepository;
 import com.ctrledu.MasterService.repository.MasterModuleRepository;
 import com.ctrledu.MasterService.repository.MasterUserRepository;
@@ -45,23 +44,22 @@ public class UserService {
 //        return classRepository.findByOrgId(user.getOrgId().getOrgId());
 //    }
 
-    public List<TeacherDTO> getModulesForTeacher(Long teacherId) {
+    public List<UserDTO> getModulesForTeacher(Long teacherId) {
         List<ClassEntity> classEntities = masterModuleRepository.findByTeacherId(teacherId);
-        List<TeacherDTO> teacherDTOs = new ArrayList<>();
+        List<UserDTO> teacherDTOs = new ArrayList<>();
 
         for (ClassEntity classEntity : classEntities) {
             for (ModuleEntity moduleEntity : classEntity.getModules()) {
                 if (moduleEntity.getTeacher().getUserId().equals(teacherId)) {
-                    TeacherDTO teacherDTO = new TeacherDTO(
+                    UserDTO userDTO = new UserDTO(
                             moduleEntity.getTeacher().getUserId(),
                             moduleEntity.getTeacher().getUserFirstName()+ moduleEntity.getTeacher().getUserLastName(),
                             moduleEntity.getModuleId(),
-                            moduleEntity.getModuleCode(),
                             moduleEntity.getModuleName(),
                             classEntity.getClassId(),
                             classEntity.getClassName()
                     );
-                    teacherDTOs.add(teacherDTO);
+                    teacherDTOs.add(userDTO);
                 }
             }
         }
@@ -70,7 +68,7 @@ public class UserService {
 
     }
 
-    public List<StudentDTO> getClassesForStudent(Long studentId) {
+    public List<UserDTO> getClassesForStudent(Long studentId) {
         Optional<UserEntity> userEntityOpt = masterUserRepository.getUserById(studentId);
         if (userEntityOpt.isEmpty()) {
             throw new EntityNotFoundException("User not found with ID: " + studentId);
@@ -78,11 +76,11 @@ public class UserService {
 
         String userName = userEntityOpt.get().getUserFirstName() + userEntityOpt.get().getUserLastName();
         List<ClassEntity> classEntities = masterClassRepository.findClassesForStudent(studentId);
-        List<StudentDTO> studentDTOs = new ArrayList<>();
+        List<UserDTO> userDTOs = new ArrayList<>();
 
         for (ClassEntity classEntity : classEntities) {
             for (ModuleEntity moduleEntity : classEntity.getModules()) {
-                StudentDTO studentDTO = new StudentDTO(
+                UserDTO userDTO = new UserDTO(
                         studentId,
                         userName,
                         classEntity.getClassId(),
@@ -90,10 +88,10 @@ public class UserService {
                         moduleEntity.getModuleId(),
                         moduleEntity.getModuleName()
                 );
-                studentDTOs.add(studentDTO);
+                userDTOs.add(userDTO);
             }
         }
 
-        return studentDTOs;
+        return userDTOs;
     }
 }

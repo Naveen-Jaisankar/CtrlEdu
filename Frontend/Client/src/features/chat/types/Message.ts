@@ -4,4 +4,6 @@ export interface Message {
   topic: string;
   timestamp: number;
   time: string;
+  classId: string;
+  moduleId: string;
 }
