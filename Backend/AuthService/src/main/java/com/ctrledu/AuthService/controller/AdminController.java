@@ -40,10 +40,21 @@ public class AdminController {
         try {
             Map<String, String> response = adminService.addUser(request);
 
+            String uniquCode = response.get("uniqueCode");
+
+            Map<String, Object> emailPayload = Map.of(
+                    "to", request.getEmail(),
+                    "subject", "Welcome to CtrlEdu!",
+                    "firstName", request.getFirstName(),
+                    "lastName", request.getLastName(),
+                    "uniqueCode",uniquCode
+
+            );
+
             serviceCommunicator.sendPostRequest(
                     "http://NotificationService", // Use http://, not lb://
                     "/api/notify/email/send",
-                    request.getEmail(),
+                    emailPayload,
                     String.class
             ).subscribe(res -> {
                 System.out.println("Notification Sent: " + res);

@@ -80,6 +80,7 @@ services:
     container_name: notification-service
     ports:
       - "8082:8082"
+      - "5006:5006"
     depends_on:
       - rabbitmq
       - eureka
