@@ -38,41 +38,41 @@ public class ListenerConfig {
         return new DefaultKafkaConsumerFactory<>(configurations, new StringDeserializer(), new JsonDeserializer<>(Message.class));
     }
 
-    @Bean
-    public ConsumerFactory<String, Message> consumerFactoryTopic2() {
-        Map<String, Object> configurations = new HashMap<>();
-        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER);
-        configurations.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConstants.GROUP_ID_2);
-        configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        return new DefaultKafkaConsumerFactory<>(configurations, new StringDeserializer(), new JsonDeserializer<>(Message.class));
-    }
+//    @Bean
+//    public ConsumerFactory<String, Message> consumerFactoryTopic2() {
+//        Map<String, Object> configurations = new HashMap<>();
+//        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER);
+//        configurations.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConstants.GROUP_ID_2);
+//        configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+//        configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+//        return new DefaultKafkaConsumerFactory<>(configurations, new StringDeserializer(), new JsonDeserializer<>(Message.class));
+//    }
+//
+//    @Bean
+//    ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory2() {
+//        ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(consumerFactoryTopic2());
+//        return factory;
+//    }
 
-    @Bean
-    ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory2() {
-        ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryTopic2());
-        return factory;
-    }
 
-
-    @Bean
-    public ConsumerFactory<String, Message> consumerFactoryTopic3() {
-        Map<String, Object> configurations = new HashMap<>();
-        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER);
-        configurations.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConstants.GROUP_ID_3);
-        configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        return new DefaultKafkaConsumerFactory<>(configurations, new StringDeserializer(), new JsonDeserializer<>(Message.class));
-    }
-
-    @Bean
-    ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory3() {
-        ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryTopic3());
-        return factory;
-    }
+//    @Bean
+//    public ConsumerFactory<String, Message> consumerFactoryTopic3() {
+//        Map<String, Object> configurations = new HashMap<>();
+//        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER);
+//        configurations.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConstants.GROUP_ID_3);
+//        configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+//        configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+//        return new DefaultKafkaConsumerFactory<>(configurations, new StringDeserializer(), new JsonDeserializer<>(Message.class));
+//    }
+//
+//    @Bean
+//    ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory3() {
+//        ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(consumerFactoryTopic3());
+//        return factory;
+//    }
 
 }

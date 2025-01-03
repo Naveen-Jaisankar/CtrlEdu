@@ -4,10 +4,12 @@ import com.ctrledu.ChatService.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +25,8 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 public class ChatController {
+    @Autowired
+    private SimpMessagingTemplate template;
 
     @Autowired
     private KafkaTemplate<String, Message> kafkaTemplate;
@@ -101,12 +105,17 @@ public class ChatController {
 
 
     // WebSocket API
-    @MessageMapping("/sendMessage")
-    @SendTo("/topic/group")
-    public Message broadcastGroupMessage(@Payload Message message) {
-        //Sending this message to all the subscribers
-        return message;
+
+    @MessageMapping("/send")
+    public void broadcastGroupMessage(@Payload Message message) {
+        String topic = message.getTopic();
+        System.out.println("Broadcasting to topic: " + topic);
+
+        // Correctly broadcast to all subscribers on this topic
+        template.convertAndSend("/topic/" + topic, message);
     }
+
+
 
     @MessageMapping("/newUser")
     @SendTo("/topic/group")

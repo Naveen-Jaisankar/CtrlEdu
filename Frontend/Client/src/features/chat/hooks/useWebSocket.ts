@@ -1,49 +1,52 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { Client } from "@stomp/stompjs";
 
-const useWebSocket = <T>(url: string, onMessage: (message: T) => void) => {
-  const socket = useRef<WebSocket | null>(null);
-
-  const sendMessage = useCallback((message: T) => {
-    if (socket.current && socket.current.readyState === WebSocket.OPEN) {
-      socket.current.send(JSON.stringify(message));
-    } else {
-      console.error("WebSocket is not open");
-    }
-  }, []);
+const useWebSocket = (
+  topic: string,
+  onMessageReceived: (message: any) => void
+) => {
+  const [client, setClient] = useState<Client | null>(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    socket.current = new WebSocket(url);
+    const stompClient = new Client({
+      brokerURL: "ws://localhost:8085/ws-chat",
+      debug: (str) => console.log("STOMP Debug:", str),
+      reconnectDelay: 5000,
+      onConnect: () => {
+        setConnected(true);
+        console.log(`✅ Connected and subscribing to: /topic/${topic}`);
+        stompClient.subscribe(`/topic/${topic}`, (message) => {
+          const parsedMessage = JSON.parse(message.body);
+          onMessageReceived(parsedMessage);
+        });
+      },
+      onStompError: (error) => {
+        console.error("❌ STOMP Error:", error);
+      },
+    });
 
-    socket.current.onopen = () => {
-      console.log("WebSocket connection established");
-    };
-
-    socket.current.onmessage = (event) => {
-      try {
-        const data: T = JSON.parse(event.data);
-        onMessage(data);
-      } catch (err) {
-        console.error("Error parsing WebSocket message:", err);
-      }
-    };
-
-    socket.current.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    socket.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+    stompClient.activate();
+    setClient(stompClient);
 
     return () => {
-      if (socket.current) {
-        console.log("Closing WebSocket connection");
-        socket.current.close();
-      }
+      stompClient.deactivate();
     };
-  }, [url, onMessage]);
+  }, [topic, onMessageReceived]);
 
-  return { sendMessage };
+  const sendMessage = (message: any) => {
+    if (client && connected) {
+      console.log("📤 Sending message:", message);
+      client.publish({
+        destination: `/app/send`,
+        body: JSON.stringify(message),
+      });
+    } else {
+      console.error("❌ WebSocket not connected!");
+    }
+  };
+
+  return { sendMessage, connected };
 };
 
 export default useWebSocket;

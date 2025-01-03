@@ -8,7 +8,7 @@ const apiClient = axios.create({
   },
 });
 
-// Fetch messages from Redis via REST API
+// Fetch messages for a given topic
 export const getMessages = async (
   topic: string,
   offset: number = 0
@@ -24,13 +24,7 @@ export const getMessages = async (
   }
 };
 
-// Persist message to the backend using REST API only
-export const persistMessage = async (message: Message): Promise<void> => {
-  try {
-    await apiClient.post("/message", message);
-    console.log("💾 Message persisted via REST API:", message);
-  } catch (error) {
-    console.error("Error persisting message:", error);
-    throw error;
-  }
+// Send a message to the backend
+export const sendMessage = async (message: Message): Promise<void> => {
+  await apiClient.post("/message", message);
 };
