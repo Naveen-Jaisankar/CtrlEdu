@@ -54,10 +54,11 @@ public class UserService {
                     UserDTO userDTO = new UserDTO(
                             moduleEntity.getTeacher().getUserId(),
                             moduleEntity.getTeacher().getUserFirstName()+ moduleEntity.getTeacher().getUserLastName(),
-                            moduleEntity.getModuleId(),
-                            moduleEntity.getModuleName(),
                             classEntity.getClassId(),
-                            classEntity.getClassName()
+                            classEntity.getClassName(),
+                            moduleEntity.getModuleId(),
+                            moduleEntity.getModuleName()
+
                     );
                     teacherDTOs.add(userDTO);
                 }

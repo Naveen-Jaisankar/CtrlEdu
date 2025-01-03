@@ -123,6 +123,7 @@ const ChatPage: React.FC = () => {
   const handleSelectChat = (topic: string, userId: string) => {
     setSelectedTopic(topic);
     setSelectedUserId(userId);
+    console.log(userId);
     localStorage.setItem("userId", userId);
   };
 
