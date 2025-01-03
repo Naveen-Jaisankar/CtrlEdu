@@ -28,5 +28,43 @@ public class ModuleEntity {
     @JoinColumn(name = "CE_ORG_ID", referencedColumnName = "CE_ORG_ID", nullable = false)
     private OrganizationEntity orgId;
 
+    public Long getModuleId() {
+        return moduleId;
+    }
 
+    public void setModuleId(Long moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public String getModuleCode() {
+        return moduleCode;
+    }
+
+    public void setModuleCode(String moduleCode) {
+        this.moduleCode = moduleCode;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public UserEntity getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(UserEntity teacher) {
+        this.teacher = teacher;
+    }
+
+    public OrganizationEntity getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(OrganizationEntity orgId) {
+        this.orgId = orgId;
+    }
 }
