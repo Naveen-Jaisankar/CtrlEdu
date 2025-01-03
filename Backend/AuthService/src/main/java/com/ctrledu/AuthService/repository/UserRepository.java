@@ -96,7 +96,20 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     );
     @Query("SELECT m FROM ModuleEntity m WHERE m.orgId = :orgId")
     List<ModuleEntity> findModulesByOrgId(@Param("orgId") Long orgId);
+    @Query("SELECT u FROM UserEntity u WHERE u.orgId.orgId = :orgId AND u.userRole = 'student'")
+    List<UserEntity> findStudentsByOrgId(@Param("orgId") Long orgId);
 
+    @Query("""
+SELECT u FROM UserEntity u 
+WHERE u.orgId.orgId = :orgId 
+AND u.userRole = 'student' 
+AND NOT EXISTS (
+    SELECT 1 FROM ClassEntity c 
+    JOIN c.students s 
+    WHERE s.userId = u.userId
+)
+""")
+    List<UserEntity> findUnassignedStudentsByOrgId(@Param("orgId") Long orgId);
 
 
 

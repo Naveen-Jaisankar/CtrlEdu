@@ -1,30 +1,31 @@
 package com.ctrledu.AuthService.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TeacherResponse {
-    private Long teacherId;
+public class StudentResponse {
+    private Long studentId;
     private String firstName;
     private String lastName;
     private boolean isAssigned;
 
-    public TeacherResponse(Long teacherId, String firstName, String lastName, boolean isAssigned) {
-        this.teacherId = teacherId;
+    public StudentResponse(Long studentId, String firstName, String lastName, boolean isAssigned) {
+        this.studentId = studentId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isAssigned = isAssigned;
     }
 
-    public Long getTeacherId() {
-        return teacherId;
+    public Long getStudentId() {
+        return studentId;
     }
 
-    public void setTeacherId(Long teacherId) {
-        this.teacherId = teacherId;
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
     }
 
     public String getFirstName() {
@@ -51,3 +52,5 @@ public class TeacherResponse {
         isAssigned = assigned;
     }
 }
+
+

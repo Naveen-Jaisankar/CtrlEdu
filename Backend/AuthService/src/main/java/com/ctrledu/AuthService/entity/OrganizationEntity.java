@@ -29,4 +29,28 @@ public class OrganizationEntity {
         this.orgName = orgName;
         this.superAdminId = superAdminId;
     }
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public Long getSuperAdminId() {
+        return superAdminId;
+    }
+
+    public void setSuperAdminId(Long superAdminId) {
+        this.superAdminId = superAdminId;
+    }
 }

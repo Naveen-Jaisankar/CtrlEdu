@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ClassTab.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -16,8 +17,16 @@ const ClassTab: React.FC = () => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [classList, setClassList] = useState([]); // Initialize with an empty array
   const [moduleSuggestions, setModuleSuggestions] = useState([]); // Initialize as empty
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [availableStudents, setAvailableStudents] = useState([]);
+  const [editingClass, setEditingClass] = useState(null);
+  const isFormValid = className.trim() && numStudents > 0 && selectedModules.length > 0 && selectedStudents.length > 0;
+
+
 
   useEffect(() => {
+    fetchStudents();
     fetchClasses();
     fetchModules();
   }, []);
@@ -38,6 +47,45 @@ const ClassTab: React.FC = () => {
     }
   };
 
+  const handleStudentSelection = (student) => {
+    if (selectedStudents.length >= numStudents) {
+        toast.error(`You can only select up to ${numStudents} students.`);
+        return;
+    }
+
+    setAvailableStudents(availableStudents.filter((s) => s.id !== student.id));
+    setSelectedStudents([...selectedStudents, student]);
+};
+
+const handleStudentRemoval = (student) => {
+    setSelectedStudents(selectedStudents.filter((s) => s.id !== student.id));
+    setAvailableStudents([...availableStudents, student]);
+};
+
+
+
+
+
+  const payload = {
+    className,
+    moduleIds: selectedModules,
+    studentIds: selectedStudents.map((s) => s.id),
+};
+const handleAddClick = () => {
+  setEditingClass(null);
+  setClassName("");
+  setNumStudents(0);
+  setSelectedModules([]);
+  
+  // Show only students not assigned to any class
+  setAvailableStudents(students.filter((s) => !s.isAssigned));
+  setSelectedStudents([]);
+  setIsModalOpen(true);
+};
+
+  
+  
+
   const fetchClassData = async () => {
     try {
       const response = await axios.get("/api/classes");
@@ -47,7 +95,31 @@ const ClassTab: React.FC = () => {
       setClassList([]); // Set as empty to avoid undefined issues
     }
   };
-  
+
+  const fetchStudents = async () => {
+    try {
+        const response = await axios.get("http://localhost:8084/api/admin/students", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+        });
+        
+        // Filter out students assigned to any class
+        const students = response.data.map((student) => ({
+            id: student.studentId,
+            firstName: student.firstName,
+            lastName: student.lastName,
+            isAssigned: student.isAssigned, // True if already assigned
+        }));
+
+        setAvailableStudents(students.filter((s) => !s.isAssigned)); 
+        setStudents(students); // Keep the full list for further filtering
+    } catch (error) {
+        console.error("Error fetching students:", error);
+        toast.error("Failed to fetch students.");
+    }
+};
+
+
+
 
   const fetchModules = async () => {
     try {
@@ -72,25 +144,103 @@ const ClassTab: React.FC = () => {
 };
 
 
-  const handleAddClass = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
+const handleAddOrEditClass = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // Validate fields
+  if (!className.trim()) {
+      toast.error("Class name is required.");
+      return;
+  }
+  if (numStudents <= 0) {
+      toast.error("Number of students must be greater than zero.");
+      return;
+  }
+  if (selectedModules.length === 0) {
+      toast.error("At least one module must be selected.");
+      return;
+  }
+  if (selectedStudents.length === 0) {
+      toast.error("At least one student must be selected.");
+      return;
+  }
+
+  try {
       const payload = {
-        className,
-        numStudents,
-        moduleIds: selectedModules,
+          className,
+          numberOfStudents: numStudents,
+          moduleIds: selectedModules,
+          studentIds: selectedStudents.map((s) => s.id),
       };
-      await axios.post("http://localhost:8084/api/admin/add-class", payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
-      });
-      toast.success("Class added successfully!");
+
+      if (editingClass) {
+          // Edit Class API call
+          await axios.put(`http://localhost:8084/api/admin/edit-class/${editingClass.classId}`, payload, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+          toast.success("Class updated successfully!");
+      } else {
+          // Add Class API call
+          await axios.post("http://localhost:8084/api/admin/add-class", payload, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+          toast.success("Class added successfully!");
+      }
+
       setIsModalOpen(false);
-      fetchClasses();
+      fetchClasses(); // Refresh the list
+      fetchStudents();
       resetForm();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add class.");
-    }
-  };
+  } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to save class.");
+  }
+};
+
+
+
+const handleEditClick = (cls) => {
+  console.log("Editing class:", cls); // Debugging log
+
+  setEditingClass(cls);
+  setClassName(cls.className || "");
+  setNumStudents(cls.numStudents || 0);
+
+  // Set Selected Modules
+  setSelectedModules(cls.moduleIds || []);
+
+  // Separate available and selected students
+  const selectedStudentIds = cls.studentIds || [];
+  const selected = students.filter((student) => selectedStudentIds.includes(student.id));
+  const available = students.filter((student) => !selectedStudentIds.includes(student.id) && !student.isAssigned);
+
+  setSelectedStudents(selected);
+  setAvailableStudents(available);
+  setIsModalOpen(true);
+};
+
+
+
+
+const handleDeleteClass = async (classId: number) => {
+  if (!window.confirm("Are you sure you want to delete this class?")) {
+      return;
+  }
+
+  try {
+      await axios.delete(`http://localhost:8084/api/admin/delete-class/${classId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+      });
+      toast.success("Class deleted successfully!");
+      fetchClasses(); // Refresh the list
+      fetchStudents();
+  } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete class.");
+  }
+};
+
+
+
+
 
   const resetForm = () => {
     setClassName("");
@@ -100,8 +250,9 @@ const ClassTab: React.FC = () => {
 
   const handleCloseModal = () => {
     resetForm();
+    setEditingClass(null); // Reset editing state
     setIsModalOpen(false);
-  };
+};
 
   const handleModuleSelection = (moduleId: number) => {
     if (selectedModules.includes(moduleId)) {
@@ -121,12 +272,22 @@ const handleSort = (column: string) => {
 };
 
 const sortedClasses = [...classes].sort((a, b) => {
-  const valueA = a[sortColumn]?.toString().toLowerCase() || "";
-  const valueB = b[sortColumn]?.toString().toLowerCase() || "";
-  return sortDirection === "asc"
-    ? valueA.localeCompare(valueB)
-    : valueB.localeCompare(valueA);
+  const valueA = a[sortColumn];
+  const valueB = b[sortColumn];
+
+  if (typeof valueA === "number" && typeof valueB === "number") {
+    // Numeric sorting
+    return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
+  } else {
+    // String sorting
+    const stringValueA = valueA?.toString().toLowerCase() || "";
+    const stringValueB = valueB?.toString().toLowerCase() || "";
+    return sortDirection === "asc"
+      ? stringValueA.localeCompare(stringValueB)
+      : stringValueB.localeCompare(stringValueA);
+  }
 });
+
 
 const filteredClasses = sortedClasses.filter((cls) =>
   cls.className.toLowerCase().includes(searchTerm.toLowerCase())
@@ -167,10 +328,11 @@ useEffect(() => {
             </th>
             <th
               className="py-2 px-4 cursor-pointer"
-              onClick={() => handleSort("numberOfStudents")}
+              onClick={() => handleSort("numStudents")} // Use "numStudents" as the column key
             >
-              Number of Students {sortColumn === "numberOfStudents" && (sortDirection === "asc" ? "▲" : "▼")}
+              Number of Students {sortColumn === "numStudents" && (sortDirection === "asc" ? "▲" : "▼")}
             </th>
+
             <th
               className="py-2 px-4 cursor-pointer"
               onClick={() => handleSort("moduleNames")}
@@ -187,6 +349,22 @@ useEffect(() => {
                 <td>{cls.className}</td>
                 <td>{cls.numStudents}</td>
                 <td>{cls.moduleNames.join(", ")}</td>
+                <td>
+                  <button
+                      onClick={() => handleEditClick(cls)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded"
+                  >
+                      Edit
+                  </button>
+              </td>
+              <td>
+                <button
+                    onClick={() => handleDeleteClass(cls.classId)}
+                    className="bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded"
+                >
+                    Delete
+                </button>
+            </td>
               </tr>
             ))
           ) : (
@@ -203,7 +381,7 @@ useEffect(() => {
   className="bg-neutral-800 text-white p-6 rounded shadow-md max-w-md mx-auto mt-20"
 >
   <h2 className="text-lg font-bold mb-4">Add Class</h2>
-  <form onSubmit={handleAddClass}>
+  <form onSubmit={handleAddOrEditClass}>
     <div className="mb-4">
       <label className="block text-sm font-medium mb-1">Class Name</label>
       <input
@@ -227,38 +405,116 @@ useEffect(() => {
     <div className="mb-4">
     <label className="block text-sm font-medium mb-1">Modules</label>
     <div className="border rounded py-2 px-3 bg-neutral-700 text-white">
-        {moduleSuggestions.map((module) => (
-            <div key={module.moduleId} className="flex items-center">
-                <input
-                    type="checkbox"
-                    id={`module-${module.moduleId}`}
-                    checked={selectedModules.includes(module.moduleId)}
-                    onChange={() => handleModuleSelection(module.moduleId)}
-                    className="mr-2"
-                />
-                <label htmlFor={`module-${module.moduleId}`}>
-                    {module.moduleName}
-                </label>
-            </div>
-        ))}
-    </div>
+    {moduleSuggestions.map((module) => (
+        <div key={module.moduleId} className="flex items-center">
+            <input
+                type="checkbox"
+                id={`module-${module.moduleId}`}
+                checked={selectedModules.includes(module.moduleId)} // Properly reflect selected modules
+                onChange={() => handleModuleSelection(module.moduleId)}
+                className="mr-2"
+            />
+            <label htmlFor={`module-${module.moduleId}`}>
+                {module.moduleName}
+            </label>
+        </div>
+    ))}
 </div>
 
-    <div className="flex justify-end gap-2">
-      <button
-        type="button"
-        onClick={handleCloseModal}
-        className="bg-gray-500 hover:bg-gray-700 text-white py-1 px-3 rounded"
-      >
-        Cancel
-      </button>
-      <button
-        type="submit"
-        className="bg-orange-500 hover:bg-orange-700 text-white py-1 px-3 rounded"
-      >
-        Add Class
-      </button>
-    </div>
+</div>
+<label>Students:</label>
+<div>
+    <p>Remaining slots: {numStudents - selectedStudents.length}</p>
+</div>
+<div style={{ color: selectedStudents.length >= numStudents ? "red" : "black" }}>
+    {selectedStudents.length >= numStudents
+        ? "You have reached the maximum number of students."
+        : `You can select ${numStudents - selectedStudents.length} more students.`}
+</div>
+
+<div className="dual-list-box-container" style={{ display: "flex", gap: "20px" }}>
+  {/* Available Students */}
+  {/* Available Students */}
+<div style={{ flex: 1 }}>
+<h3>Available Students</h3>
+<select
+    multiple
+    style={{ width: "100%", height: "200px" }}
+    onChange={(e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions).map((option) =>
+            JSON.parse(option.value)
+        );
+        selectedOptions.forEach((student) => handleStudentSelection(student));
+    }}
+>
+    {availableStudents.map((student) => (
+        <option key={student.id} value={JSON.stringify(student)}>
+            {student.firstName} {student.lastName}
+        </option>
+    ))}
+</select>
+</div>
+
+
+  {/* Transfer Buttons */}
+  <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "10px" }}>
+    <button
+      onClick={() =>
+        availableStudents.forEach((student) => handleStudentSelection(student))
+      }
+    >
+      &gt;&gt;
+    </button>
+    <button
+      onClick={() =>
+        selectedStudents.forEach((student) => handleStudentRemoval(student))
+      }
+    >
+      &lt;&lt;
+    </button>
+  </div>
+
+  {/* Selected Students */}
+  <div style={{ flex: 1 }}>
+  <h3>Selected Students</h3>
+<select
+    multiple
+    style={{ width: "100%", height: "200px" }}
+    value={selectedStudents.map((student) => student.id)}
+    onChange={(e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions).map((option) =>
+            JSON.parse(option.value)
+        );
+        selectedOptions.forEach((student) => handleStudentRemoval(student));
+    }}
+>
+    {selectedStudents.map((student) => (
+        <option key={student.id} value={JSON.stringify(student)}>
+            {student.firstName} {student.lastName}
+        </option>
+    ))}
+</select>
+</div>
+
+</div>
+<div className="flex justify-end gap-2">
+  <button
+    type="button"
+    onClick={handleCloseModal}
+    className="bg-gray-500 hover:bg-gray-700 text-white py-1 px-3 rounded"
+  >
+    Cancel
+  </button>
+  <button
+    type="submit"
+    className={`bg-orange-500 ${isFormValid ? "hover:bg-orange-700" : "opacity-50 cursor-not-allowed"} text-white py-1 px-3 rounded`}
+    disabled={!isFormValid}
+>
+    {editingClass ? "Update" : "Add"}
+</button>
+</div>
+
+
   </form>
 </Modal>
 
