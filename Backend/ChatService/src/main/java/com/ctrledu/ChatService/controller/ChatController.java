@@ -1,7 +1,6 @@
 package com.ctrledu.ChatService.controller;
-
-
-
+import com.ctrledu.AuthService.entity.ClassEntity;
+import com.ctrledu.AuthService.entity.ModuleEntity;
 import com.ctrledu.ChatService.constants.KafkaConstants;
 import com.ctrledu.ChatService.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -33,13 +33,29 @@ public class ChatController {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping(value = "/api/message", consumes = "application/json", produces = "application/json")
-    public void sendMessage(@RequestBody Message message) {
-        try {
-            kafkaTemplate.send(message.getTopic(), message).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+    public void sendMessage(@RequestBody Message message) throws InterruptedException, ExecutionException {
+        //            kafkaTemplate.send(message.getTopic(), message).get();
+        kafkaTemplate.send("class_" + message.getClassId() + "_module_" + message.getModuleId(), message);
+
     }
+
+    @GetMapping(value = "/api/messages", produces = "application/json")
+    public Map<String, Object> getMessages(@RequestParam String classId, @RequestParam String moduleId, @RequestParam int offset) {
+        String baseKey = "class_" + classId + "_module_" + moduleId + "_";
+        int lastSeqNum = Integer.parseInt((String) redisTemplate.opsForValue().get(baseKey + "last_seq_num"));
+        List<Message> messages = new ArrayList<>();
+
+        for (int i = lastSeqNum; i > 0 && i > lastSeqNum - offset; i--) {
+            String key = baseKey + "seq_" + i;
+            Message message = (Message) redisTemplate.opsForValue().get(key);
+            if (message != null) messages.add(message);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("messages", messages);
+        return response;
+    }
+
 
     @GetMapping(value = "/api/message", produces = "application/json")
     public Map<String, Object> getMessages(@RequestParam int offset, @RequestParam String topic ) {
@@ -83,6 +99,8 @@ public class ChatController {
         System.out.println("Final messages: " + messages);
         return response;
     }
+
+
 
     // WebSocket API
     @MessageMapping("/sendMessage")

@@ -32,12 +32,22 @@ public class MessageListenerTopic3 {
         }
 
         int currentSeqNum = lastSeqNum + 1;
-        redisTemplate.opsForValue().set("topic3_seq_" + currentSeqNum, message);
-        redisTemplate.opsForValue().set("topic3_last_seq_num", Integer.toString(currentSeqNum));
+        String key = "class_" + message.getClassId() + "_module_" + message.getModuleId() + "_seq_" + currentSeqNum;
+        redisTemplate.opsForValue().set(key, message);
+        redisTemplate.opsForValue().set("class_" + message.getClassId() + "_module_" + message.getModuleId() + "_last_seq_num", Integer.toString(currentSeqNum));
+
+//        redisTemplate.opsForValue().set("topic3_seq_" + currentSeqNum, message);
+//        redisTemplate.opsForValue().set("topic3_last_seq_num", Integer.toString(currentSeqNum));
         redisTemplate.expire("topic3_last_seq_num", 43200, TimeUnit.MINUTES);
         redisTemplate.expire("topic3_seq_" + Integer.toString(currentSeqNum), 43200, TimeUnit.MINUTES);
         //System.out.println(redisTemplate.opsForValue().get("topic3_last_seq_num"));
         System.out.println("sending via kafka listener..");
-        template.convertAndSend("/topic/group", message);
+        System.out.println("Received message from dynamic topic: " + message.getTopic());
+        System.out.println("Received message for class: " + message.getClassId() + " and module: " + message.getModuleId());
+        // template.convertAndSend("/topic/group", message);
+        // Process message dynamically from any matching topic
+        template.convertAndSend("/topic/class_" + message.getClassId() + "_module_" + message.getModuleId(), message);
+
     }
+
 }
