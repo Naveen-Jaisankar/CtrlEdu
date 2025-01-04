@@ -123,7 +123,7 @@ Ctrl+Edu is a comprehensive distributed educational campus management system des
 
 ## Links:
 - [Project Report](./CtrlEdu Report.pdf)
-- [Demo Video](<Insert Link Here>)
+- [Demo Video](CtrlEdu_Demo.mp4)
 
 ---
 
