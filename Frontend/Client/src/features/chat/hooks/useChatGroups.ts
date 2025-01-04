@@ -26,7 +26,7 @@ const useChatGroups = (): UseChatGroupsResult => {
     const fetchChatGroups = async () => {
       try {
         const response = await axios.get<ChatGroup[]>(
-          "http://localhost:8084/api/client/contacts",
+          "http://localhost:8084/api/admin/contacts",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

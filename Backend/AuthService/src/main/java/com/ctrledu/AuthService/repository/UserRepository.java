@@ -111,6 +111,9 @@ AND NOT EXISTS (
 """)
     List<UserEntity> findUnassignedStudentsByOrgId(@Param("orgId") Long orgId);
 
+    @Query("SELECT u FROM UserEntity u WHERE u.userId = :userId")
+    Optional<UserEntity> getUserById(@Param("userId") Long userId);
+
 
 
 

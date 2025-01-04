@@ -1,5 +1,6 @@
 package com.ctrledu.AuthService.repository;
 
+import com.ctrledu.AuthService.entity.ClassEntity;
 import com.ctrledu.AuthService.entity.ModuleEntity;
 import com.ctrledu.AuthService.entity.OrganizationEntity;
 import jakarta.persistence.JoinColumn;
@@ -51,5 +52,13 @@ public interface ModuleRepository extends JpaRepository<ModuleEntity, Long> {
     WHERE m.orgId.orgId = :orgId
 """)
     List<ModuleEntity> findByOrgId(@Param("orgId") Long orgId);
+
+    @Query(value = "SELECT c.* FROM classes c " +
+            "JOIN class_modules cm ON c.class_id = cm.class_id " +
+            "JOIN ce_modules m ON cm.module_id = m.module_id " +
+            "WHERE m.teacher_id = :teacherId",
+            nativeQuery = true)
+
+    List<ClassEntity> findByTeacherId(@Param("teacherId") Long teacherId);
 
 }

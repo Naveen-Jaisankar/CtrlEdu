@@ -22,7 +22,6 @@
         <module>NotificationService</module>
         <module>GatewayService</module>
         <module>EurekaService</module>
-        <module>MasterService</module>
         <module>ChatService</module>
     </modules>
 

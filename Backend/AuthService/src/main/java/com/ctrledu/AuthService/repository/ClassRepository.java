@@ -19,6 +19,12 @@ public interface ClassRepository extends JpaRepository<ClassEntity, Long> {
 
     void deleteById(Long classId);
 
+    @Query(value = "SELECT c.* FROM classes c " +
+            "JOIN class_students cs ON c.class_id = cs.class_id " +
+            "WHERE cs.student_id = :studentId",
+            nativeQuery = true)
+    List<ClassEntity> findClassesForStudent(@Param("studentId") Long studentId);
+
 }
 
 
